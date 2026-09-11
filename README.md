@@ -145,10 +145,8 @@ largest blob, and an already selected annotation of the same class becomes a siz
 the clicks that follow. In oriented-box projects the front direction arrives as something
 to confirm, not as a silent guess. SAM1, SAM2, SAM3 and FastSAM weights are all supported.
 
-<div align="center">
-<a href="docs/assets/images/sam-click-to-box.mp4"><img src="docs/assets/images/sam-click-to-box-poster.jpg" alt="Labeling view with the SAM click tool active: oriented boxes on moored boats and the AI proposals panel listing them for review" width="820"></a>
-<br><sub>One click turns into the outline of a single object. <a href="docs/assets/images/sam-click-to-box.mp4">Play the recording</a></sub>
-</div>
+<video src="https://github.com/user-attachments/assets/17e5fb21-684b-4b0c-acc6-6d7c481a27b1" poster="https://raw.githubusercontent.com/jakubslesinski/geotile-label/main/docs/assets/images/sam-click-to-box-poster.jpg" controls muted playsinline width="820"></video>
+<br><sub>One click turns into the outline of a single object.</sub>
 
 ### Text prompt (SAM3)
 
@@ -159,10 +157,8 @@ confidence, to accept or reject one by one or in bulk. The vocabulary is open an
 `pojazd_transportowy_kategoria_iii` is a poor one. Requires a SAM3 checkpoint and its text
 encoder.
 
-<div align="center">
-<a href="docs/assets/images/sam3-text-prompt.mp4"><img src="docs/assets/images/sam3-text-prompt-poster.jpg" alt="A text prompt has segmented every boat in the view; the AI proposals panel holds 98 pending oriented boxes with confidence scores" width="820"></a>
-<br><sub>One phrase, every instance in the view. <a href="docs/assets/images/sam3-text-prompt.mp4">Play the recording</a></sub>
-</div>
+<video src="https://github.com/user-attachments/assets/8c1df2c6-8808-4b7a-9df5-b13bfea487c3" poster="https://raw.githubusercontent.com/jakubslesinski/geotile-label/main/docs/assets/images/sam3-text-prompt-poster.jpg" controls muted playsinline width="820"></video>
+<br><sub>One phrase, every instance in the view.</sub>
 
 ### Find similar
 
@@ -173,10 +169,8 @@ features, which makes it few-shot with no training at all, robust to changes of 
 rotation and illumination, and the one that also works on **SAR**. Several exemplars can
 be selected at once, and DINO averages them into a single prototype.
 
-<div align="center">
-<a href="docs/assets/images/find-similar.mp4"><img src="docs/assets/images/find-similar-poster.jpg" alt="A SAR scene where one marked vehicle has produced 97 similar-object proposals across the whole parking area" width="820"></a>
-<br><sub>One selected object, the rest found automatically, here on SAR. <a href="docs/assets/images/find-similar.mp4">Play the recording</a></sub>
-</div>
+<video src="https://github.com/user-attachments/assets/2dd3981d-6b5d-47ba-8187-4d4651ad4780" poster="https://raw.githubusercontent.com/jakubslesinski/geotile-label/main/docs/assets/images/find-similar-poster.jpg" controls muted playsinline width="820"></video>
+<br><sub>One selected object, the rest found automatically, here on SAR.</sub>
 
 ## Documentation
 
