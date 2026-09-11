@@ -1,0 +1,14 @@
+INHERIT: mkdocs.yml
+
+# Konfiguracja tylko do lokalnej edycji dokumentacji. Nie jest używana przez
+# build release, Tauri ani paczki udostępniane użytkownikom.
+plugins:
+  - search:
+      lang: en
+  - privacy:
+      cache_dir: .docs-build/privacy-cache
+  - offline
+  - live-edit:
+      websockets_host: 127.0.0.1
+      websockets_port: 8484
+      article_selector: article.md-content__inner

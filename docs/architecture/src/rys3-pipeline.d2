@@ -1,0 +1,85 @@
+# PLIK GENEROWANY — nie edytowac recznie.
+# Zrodlo tresci: docs/architecture/architecture-model.json
+# Generator:     scripts/generate-architecture-d2.py
+# Uklad rysunkow artykulu jest RECZNY i zyje w Figmie; ten plik sluzy recenzji tresci.
+
+# Rys. 3 — architektura funkcjonalna i potok danych
+direction: right
+
+sources: "Data sources" {
+  sar_packages: "SAR packages — ICEYE · Capella · Umbra"
+  eo_packages: "EO packages — Pléiades 1 / Neo · WorldView · BlackSky"
+  airborne_uav_imagery: "Airborne / UAV imagery — GeoTIFF · NITF"
+}
+
+import: "Import & raster access" {
+  provider_specific_package_resolvers: "provider-specific package resolvers"
+  asset_selection: "asset selection"
+  persistent_import_jobs: "persistent import jobs"
+  metadata_source_identity: "metadata & source identity"
+  scenerasterresolver: "SceneRasterResolver"
+  vrt_mosaic_pansharpening: "VRT / mosaic / pansharpening"
+  project_overviews_external_ovr: "project overviews / external .ovr"
+  published_full_resolution_cog: "published full-resolution COG"
+  affine_gcp_tps_georeferencing: "affine & GCP/TPS georeferencing"
+  # silnik: GDAL · rasterio · PROJ
+}
+
+canonical: "Canonical Geospatial Dataset" {
+  style.fill: "#eef0ff"
+  source_scene_references: "source scene references"
+  working_views: "working views"
+  source_annotations: "source annotations"
+  scene_manifests: "scene manifests"
+  acquisition_metadata: "acquisition metadata"
+  spatial_geometry_provenance: "spatial geometry & provenance"
+}
+
+annotation: "Annotation & QA" {
+  aabb_obb_manual_annotation: "AABB / OBB manual annotation"
+  sam_yolo_template_dino_assist: "SAM · YOLO · template/DINO assist"
+  review_grid: "review grid"
+  team_annotation_packages: "team annotation packages"
+  manager_review: "manager review"
+  annotation_provenance: "annotation provenance"
+  # silnik: SAM · DINO
+}
+
+generation: "Dataset generation" {
+  metadata_only_tile_catalog: "metadata-only tile catalog"
+  versioned_json_indexes: "versioned JSON indexes"
+  preprocessing_profiles: "preprocessing profiles"
+  filtering: "filtering"
+  spatial_split: "spatial split"
+  negative_samples: "negative samples"
+  immutable_dataset_runs: "immutable dataset runs"
+  leakage_audit_statistics: "leakage audit & statistics"
+}
+
+training: "Training & analysis" {
+  yolo_aabb_obb_training: "YOLO AABB/OBB training"
+  prediction: "prediction"
+  class_similarity_analysis: "class similarity analysis"
+  metrics_confusion_matrix: "metrics & confusion matrix"
+  model_registry: "model registry"
+  # silnik: PyTorch · Ultralytics
+}
+
+exports: "Exports" {
+  yolo_coco_pascal_voc: "YOLO · COCO · Pascal VOC"
+  geoparquet_native_wgs84_geojson_geopackage: "GeoParquet (native / WGS84) · GeoJSON · GeoPackage"
+  acquisition_metadata_sidecars: "acquisition metadata sidecars"
+  manifests_checksums_audit_report: "manifests · checksums · audit report"
+  reusable_zip_dataset_package: "reusable ZIP dataset package"
+  # silnik: GeoParquet (pyarrow) · GDAL
+}
+
+# kolejnosc etapow
+sources -> import
+import -> canonical
+canonical -> annotation
+annotation -> generation
+generation -> training
+training -> exports
+
+# wspolny stos technologiczny: Tauri desktop · React / TypeScript · FastAPI · GDAL / rasterio / PROJ · PyTorch / Ultralytics · Local storage

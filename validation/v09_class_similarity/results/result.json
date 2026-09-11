@@ -1,0 +1,101 @@
+{
+  "id": "v09",
+  "claim": "S2",
+  "title": "Podobieństwo klas (embeddingi) — zwalidowane confusion z v06",
+  "status": "pass",
+  "substrate": [
+    "FAIR1M"
+  ],
+  "tier": "public",
+  "metrics": {
+    "project": "FAIR1M",
+    "confusion_run": "20260825T074034311691Z_0fcb5e4b",
+    "device": "cpu",
+    "backbone": "dinov2_vits14_reg4_pretrain.pth",
+    "n_scenes_sampled": 200,
+    "n_objects": 2502,
+    "n_classes_with_objects": 33,
+    "n_pairs": 528,
+    "similarity_confusion_spearman": 0.6281,
+    "top_pairs": [
+      {
+        "class_a": "Small Car",
+        "class_b": "Van",
+        "similarity": 0.9955,
+        "confusion_count": 4591
+      },
+      {
+        "class_a": "Van",
+        "class_b": "other-vehicle",
+        "similarity": 0.9892,
+        "confusion_count": 379
+      },
+      {
+        "class_a": "Small Car",
+        "class_b": "other-vehicle",
+        "similarity": 0.9881,
+        "confusion_count": 314
+      },
+      {
+        "class_a": "A321",
+        "class_b": "Boeing737",
+        "similarity": 0.9795,
+        "confusion_count": 8
+      },
+      {
+        "class_a": "A220",
+        "class_b": "Boeing737",
+        "similarity": 0.9794,
+        "confusion_count": 22
+      },
+      {
+        "class_a": "A220",
+        "class_b": "A321",
+        "similarity": 0.9762,
+        "confusion_count": 13
+      },
+      {
+        "class_a": "Dry Cargo Ship",
+        "class_b": "Liquid Cargo Ship",
+        "similarity": 0.9756,
+        "confusion_count": 94
+      },
+      {
+        "class_a": "Cargo Truck",
+        "class_b": "Dump Truck",
+        "similarity": 0.9649,
+        "confusion_count": 103
+      },
+      {
+        "class_a": "Dry Cargo Ship",
+        "class_b": "Engineering Ship",
+        "similarity": 0.9647,
+        "confusion_count": 60
+      },
+      {
+        "class_a": "Liquid Cargo Ship",
+        "class_b": "Tugboat",
+        "similarity": 0.9641,
+        "confusion_count": 6
+      }
+    ]
+  },
+  "artifacts": [
+    "results/class_similarity.csv"
+  ],
+  "config": {
+    "project": "FAIR1M",
+    "n_scenes": 200,
+    "max_per_class": 300,
+    "chip": 64
+  },
+  "notes": "FAIR1M: DINO similarity (33 klas / 2502 obiektów z 200 scen, cpu) vs confusion z 20260825T074034311691Z_0fcb5e4b. Korelacja Spearmana podobieństwo↔pomyłki = 0.6281 na 528 parach. Najpodobniejsza para: Small Car↔Van (sim=0.9955, pomyłek=4591).",
+  "timestamp": "2026-09-09T11:09:02.923174+00:00",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "app_rev": "6cf3028",
+    "app_fingerprint": "7ca623b59cdc3ee8:258",
+    "app_version": "1.4.0"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "id": "v01",
+  "claim": "S1",
+  "title": "Macierz zgodności dostawca × format × CRS × dtype × postać dostawy",
+  "status": "pass",
+  "substrate": [
+    "xView3",
+    "FAIR1M",
+    "DOTA",
+    "DIOR-R",
+    "Capella"
+  ],
+  "tier": "mixed",
+  "metrics": {
+    "rows": 5,
+    "public_rows": 5,
+    "reported_only_rows": 0,
+    "covered": 4,
+    "ingestable_rows": 4,
+    "coverage_pct": 100.0,
+    "float16_handled": true,
+    "geo_rows_ok": 3,
+    "render_ok": 3,
+    "delivery_shapes": [
+      "single_file"
+    ],
+    "delivery_shapes_unobserved": [
+      "multipart_mosaic",
+      "archive"
+    ],
+    "providers_reported": [],
+    "undecided_rows": 0,
+    "failing": []
+  },
+  "artifacts": [
+    "results/compat_matrix.csv"
+  ],
+  "config": {
+    "float16_note": "oryginał Float16 -> KeyError: 15; working=vv_f32.vrt dtype=float32:True",
+    "provider_config": "brak konfiguracji ścieżek dostawców (scripts/provider-import-paths.json — plik lokalny, poza repozytorium)",
+    "max_packages_per_source": 4
+  },
+  "notes": "Macierz 5 wierszy (dostawca × format × CRS × dtype × postać dostawy). Publiczne: xView3[float32/GEO]=ok, FAIR1M[uint8/GEO]=ok, DOTA[uint8/NO_GEO]=ok, DIOR-R[uint8/NO_GEO]=ok, SAR_test[uint16/GEO]=na. Ingest OK 4/4 dostępnych rastrów; Float16 xView3 obsłużony=True (oryginał Float16 -> KeyError: 15; working=vv_f32.vrt dtype=float32:True). Reported-only: brak konfiguracji ścieżek dostawców (scripts/provider-import-paths.json — plik lokalny, poza repozytorium). Luki jawne: render n/a dla working-VRT (xView3), ingest n/a gdy raster źródłowy spoza tej stacji (SAR_test) oraz gdy resolver oddaje wybór produktu użytkownikowi.",
+  "timestamp": "2026-09-09T11:06:33.562168+00:00",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "app_rev": "6cf3028",
+    "app_fingerprint": "7ca623b59cdc3ee8:258",
+    "app_version": "1.4.0"
+  }
+}

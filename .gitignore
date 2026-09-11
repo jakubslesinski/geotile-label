@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+target/
+frontend/src-tauri/target/
+
+# Node / Frontend
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.tsbuildinfo
+
+# MkDocs generated artifacts
+.docs-build/
+frontend/public/help/
+
+# Project data & models — kept locally, NEVER in repo
+# (DESIGN_DECISIONS.md, scene-import; katalogi tworzy aplikacja przy starcie)
+data/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+test-scenes.local.json
+test-scene-packages.local.json
+
+# Docker volumes / runtime
+*.log
+release/
+benchmark-results/
+.desktop-build/
+frontend/src-tauri/resources/backend/*
+frontend/src-tauri/resources/backend-env/*
+frontend/src-tauri/resources/backend-env.tar.gz*
+!frontend/src-tauri/resources/backend/.gitkeep
+!frontend/src-tauri/resources/backend-env/.gitkeep
+# Kod repo DINO wstrzykiwany do backendu przy pakowaniu (prepare-tauri-backend.ps1) —
+# artefakt buildu, nie źródło. Dev bierze repo z data/models/dino (fetch-dino-repos.ps1).
+backend/vendor/
+
+# Katalogi robocze narzedzi
+.pytest_cache/
+.benchmark-work/
+tmp8m5sqhf3/
+
+# Ustawienia lokalne agenta (wspoldzielone `.claude/settings.json` moze byc wersjonowane)
+.claude/settings.local.json
+
+# Lista klas JEDNEGO projektu, nie konfiguracja aplikacji — `classes.json` zyje w katalogu
+# projektu (services/annotation_import.py), ta kopia w korzeniu to dane robocze.
+/classes.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Sciezki zrodel dostawcow sa konfiguracja lokalnego srodowiska (DESIGN_DECISIONS.md, scene-import)
+scripts/provider-import-paths.json

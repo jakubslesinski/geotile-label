@@ -1,0 +1,6 @@
+dataset,provider,sensor,modality,georeferencing,format,crs,dtype,delivery_shape,product_type,display_asset_kind,tier,manifest_ok,ingest_ok,geo_ok,render_8bit,note
+xView3,,Sentinel-1,SAR,GEO,GeoTIFF,EPSG:32632,float32,single_file,-,source,public,ok,ok,ok,na,render n/a (.vrt — working-VRT)
+FAIR1M,,,EO,GEO,GeoTIFF,EPSG:4326,uint8,single_file,-,source,public,ok,ok,ok,ok,
+DOTA,,,EO,NO_GEO,PNG,-,uint8,single_file,-,source,public,ok,ok,na,ok,
+DIOR-R,,,EO,NO_GEO,JPEG,-,uint8,single_file,-,source,public,ok,ok,na,ok,
+SAR_test,capella,Capella,SAR,GEO,GeoTIFF,EPSG:32637,uint16,single_file,-,source,public,ok,na,ok,na,raster roboczy niedostępny na tej stacji

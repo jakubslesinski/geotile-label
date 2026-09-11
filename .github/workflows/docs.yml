@@ -1,0 +1,79 @@
+# Publikacja dokumentacji uzytkownika na GitHub Pages.
+#
+# Buduje WYLACZNIE z zawartosci repozytorium: `docs-requirements.txt` przypina trzy
+# pakiety, a `mkdocs.yml` nie odwoluje sie do niczego spoza drzewa.
+#
+# `strict: true` jest ustawione w `mkdocs.yml`, wiec kazdy martwy odnosnik w dokumentacji
+# wywala ten workflow. To jest darmowa bramka jakosci — nie usuwaj `--strict`.
+#
+# Zanim zadziala, w Settings -> Pages trzeba wybrac zrodlo "GitHub Actions".
+
+name: Documentation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'docs_overrides/**'
+      - 'mkdocs.yml'
+      - 'docs-requirements.txt'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Jedno wdrozenie naraz; nie przerywamy trwajacego, zeby nie zostawic Pages w polowie.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: docs-requirements.txt
+
+      - run: pip install -r docs-requirements.txt
+
+      # Wersja w stopce serwisu bierze sie z `extra.app_version`, ktore czyta te zmienna.
+      # Czytamy ja z `frontend/package.json`, zeby numer nie rozjechal sie z wydaniem —
+      # bez tego stopka mowi "development".
+      - name: Odczytaj wersje wydania
+        id: version
+        run: |
+          value=$(python -c "import json; print(json.load(open('frontend/package.json'))['version'])")
+          echo "value=$value" >> "$GITHUB_OUTPUT"
+          echo "Wersja dokumentacji: $value"
+
+      # `mkdocs.web.yml` dokłada `site_url` (sitemap + odnosniki kanoniczne). Budowa
+      # domyslna, `mkdocs.yml`, jest OFFLINE — jedzie w instalatorze i nie moze miec
+      # zadnego odwolania do sieci w HTML-u.
+      - name: Zbuduj serwis
+        env:
+          GEOTILE_DOCS_VERSION: ${{ steps.version.outputs.value }}
+        run: mkdocs build --strict --config-file mkdocs.web.yml
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          # Musi zgadzac sie z `site_dir` z `mkdocs.yml`.
+          path: .docs-build/site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

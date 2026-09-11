@@ -1,0 +1,4 @@
+metadata_bin,n_gt,n_detected,recall
+0-2km (brzeg),1526,305,0.1999
+2-10km (przybrzeże),2990,749,0.2505
+offshore (>10km),2562,651,0.2541

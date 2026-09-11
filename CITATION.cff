@@ -1,0 +1,60 @@
+cff-version: 1.2.0
+title: GeoTile Label
+message: >-
+  If you use this software, please cite it using the metadata from this file.
+type: software
+version: 1.4.0
+license: AGPL-3.0-or-later
+
+abstract: >-
+  GeoTile Label is a Windows desktop application for annotating satellite and airborne
+  imagery and building versioned machine-learning datasets. It handles electro-optical
+  and synthetic-aperture-radar scenes, georeferenced and non-georeferenced products,
+  axis-aligned and oriented bounding boxes. Full source scenes, their metadata and the
+  annotations remain the canonical record; tiles, splits and the YOLO, COCO and Pascal
+  VOC exports are derived products that can be regenerated with different settings.
+
+keywords:
+  - remote sensing
+  - satellite imagery
+  - synthetic aperture radar
+  - image annotation
+  - object detection
+  - oriented bounding box
+  - machine learning dataset
+  - geospatial
+  - YOLO
+  - desktop application
+
+# Autorstwo OPROGRAMOWANIA — tu jest jedna osoba. Autorstwo ARTYKUŁU jest szersze
+# i siedzi w `preferred-citation` na dole pliku; te dwie listy celowo się różnią.
+authors:
+  - family-names: Ślesiński
+    given-names: Jakub
+    email: jakub.slesinski@wat.edu.pl
+    orcid: https://orcid.org/0009-0002-6283-4636
+    affiliation: Department of Imagery Intelligence, Faculty of Civil Engineering and Geodesy, Military University of Technology
+
+repository-code: https://github.com/jakubslesinski/geotile-label
+# date-released: 2026-09-14
+# identifiers:
+#   - type: doi
+#     value: 10.5281/zenodo.0000000
+#     description: Archived release of this version
+
+# preferred-citation:
+#   type: article
+#   title: ...
+#   authors:
+#     - family-names: Ślesiński
+#       given-names: Jakub
+#       orcid: https://orcid.org/0009-0002-6283-4636
+#     - family-names: Karwowska
+#       given-names: Kinga
+#       orcid: https://orcid.org/0000-0001-5132-5292
+#     - family-names: Wierzbicki
+#       given-names: Damian
+#       orcid: https://orcid.org/0000-0001-6192-3894
+#   journal: SoftwareX
+#   year: 2026
+#   doi: 10.1016/j.softx.0000.000000

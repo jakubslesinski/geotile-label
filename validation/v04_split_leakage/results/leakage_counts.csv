@@ -1,0 +1,4 @@
+mode,n_train,n_holdout,train_overlap,train_adjacent
+random_tile,5338,2289,5171,5338
+spatial_block_split,5327,2300,818,2184
+spatial_block_split+buffer,2800,2300,0,0

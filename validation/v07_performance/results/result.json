@@ -1,0 +1,76 @@
+{
+  "id": "v07",
+  "claim": "S3",
+  "title": "Wydajność dla dużej sceny: xView3 XXL oraz odczyt 1x JP2 vs COG",
+  "status": "pass",
+  "substrate": [
+    "xView3",
+    "provider:generic (JP2 1x + COG)"
+  ],
+  "tier": "mixed",
+  "metrics": {
+    "scene_px": 807477120,
+    "scene_wh": [
+      30402,
+      26560
+    ],
+    "scene_dtype": "float32",
+    "n_tiles": 1221,
+    "ingest_s": 0.047,
+    "tiling_s": 0.0013,
+    "per_tile_ms": 120.784,
+    "est_build_s": 147.5,
+    "sample_tiles": 60,
+    "peak_rss_mb": 87.1,
+    "rss_delta_mb": 25.5,
+    "render_ok": true,
+    "hardware": {
+      "platform": "Windows-10-10.0.26100-SP0",
+      "cpu_logical": 16,
+      "ram_total_gb": 128.0
+    },
+    "jp2_cog_arm": {
+      "provider": "generic",
+      "scene_wh": [
+        60476,
+        43476
+      ],
+      "scene_px": 2629254576,
+      "scene_dtype": "uint16",
+      "window_px": 512,
+      "tiles_sampled": 3,
+      "source_jp2": {
+        "ms_per_tile": 4031.4,
+        "peak_rss_mb": 94.7,
+        "rss_delta_mb": 5.0,
+        "bytes": 2610658763
+      },
+      "published_cog": {
+        "ms_per_tile": 10.6,
+        "peak_rss_mb": 98.4,
+        "rss_delta_mb": 3.8,
+        "bytes": 4076779218
+      },
+      "speedup_x": 380.3,
+      "derived_to_source_ratio": 1.562
+    }
+  },
+  "artifacts": [
+    "results/perf.csv"
+  ],
+  "config": {
+    "reps": 3,
+    "sample_tiles": 60,
+    "tile_size": 1024,
+    "buffer": 200
+  },
+  "notes": "Ramię publiczne (xView3): scena 30402×26560px (807 Mpx, float32) -> 1221 kafli. Ingest 47 ms, kaflowanie 1 ms, odczyt+render 120.8 ms/kafel (próbka 60), ekstrapolowany build ≈ 147 s. Szczyt RSS 87 MB (Δ 26 MB ≪ 3080 MB całej sceny w RAM) — przy ODCZYCIE OKIENKOWYM GeoTIFF pamięć nie skaluje się z rozmiarem sceny. Ramię JP2/COG (reported-only): scena 60476×43476 (2.63 Gpx, uint16), okno 512 px ze świeżym uchwytem na kafel. Źródłowy JP2 4031 ms/kafel wobec 11 ms/kafel z opublikowanego COG — **380×** różnicy. Pamięć w OBU ścieżkach pozostaje ograniczona (Δ RSS 5 / 4 MB). Derywat zajmuje 1.56× rozmiaru źródła. Sprzęt: 16 vCPU, 128.0 GB RAM.",
+  "timestamp": "2026-09-09T11:07:31.053914+00:00",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "app_rev": "6cf3028",
+    "app_fingerprint": "7ca623b59cdc3ee8:258",
+    "app_version": "1.4.0"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "id": "v03",
+  "claim": "C2b",
+  "title": "Odtwarzalność build'u przy tym samym seedzie i configu",
+  "status": "pass",
+  "substrate": [
+    "FAIR1M"
+  ],
+  "tier": "public",
+  "metrics": {
+    "n_runs": 5,
+    "n_scenes": 60,
+    "n_tiles": 330,
+    "all_identical": true,
+    "control_seed_differs": true,
+    "has_filter_snapshot": true,
+    "seed": 42,
+    "input_hash": "ebc860b5dadc7fbd",
+    "tiles_hash": "ec117b6e4b700f54",
+    "split_hash_by_mode": {
+      "random_tile": "710071f8eca1b26a",
+      "spatial_block_split": "2dc69bbce019dffc"
+    }
+  },
+  "artifacts": [
+    "results/repro_hashes.csv"
+  ],
+  "config": {
+    "n_runs": 5,
+    "n_scenes": 60,
+    "seed": 42,
+    "modes": [
+      "random_tile",
+      "spatial_block_split"
+    ]
+  },
+  "notes": "5× build na 60 scenach / 330 kaflach: identyczny input_hash i split (random_tile, spatial_block_split) = True; inny seed -> inny split = True; snapshot filtrów+seeda = True.",
+  "timestamp": "2026-09-09T11:06:37.979866+00:00",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "app_rev": "6cf3028",
+    "app_fingerprint": "7ca623b59cdc3ee8:258",
+    "app_version": "1.4.0"
+  }
+}

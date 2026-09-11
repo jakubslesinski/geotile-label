@@ -1,0 +1,119 @@
+# PLIK GENEROWANY — nie edytowac recznie.
+# Zrodlo tresci: docs/architecture/architecture-model.json
+# Generator:     scripts/generate-architecture-d2.py
+# Uklad rysunkow artykulu jest RECZNY i zyje w Figmie; ten plik sluzy recenzji tresci.
+
+# Rys. 2 — architektura C4-style (kontenery i komponenty)
+direction: down
+
+input: |md
+  ### Input - local data
+  - GeoTIFF · COG · EO/SAR packages · NITF
+|
+
+output: |md
+  ### Output — artifacts
+  - YOLO / COCO / VOC
+  - GeoParquet · manifests + audit
+|
+
+desktop_application_offline: "Desktop application · offline" {
+  tauri: |md
+    ### Tauri
+    _[RUST SHELL]_
+    - embeds React in a WebView
+    - launches/controls FastAPI sidecar
+    - native dialogs · app lifecycle
+  |
+  react: |md
+    ### React / TypeScript UI
+    _[WEB UI]_
+    - SceneCanvas · SceneMapCanvas
+    - LabelView · Dataset module · BandSelector
+    - display panel (histogram / percentiles)
+  |
+}
+
+backend_fastapi_bundled_runtime: "Backend · FastAPI · bundled runtime" {
+  routers: |md
+    ### Routers (FastAPI)
+    _[HTTP API]_
+    - projects · projects/nitf · scenes
+    - dataset · scan · scene_import · jobs
+  |
+  scene_res: |md
+    ### Scene package resolvers
+    _[COMPONENT]_
+    - provider resolvers (ICEYE · Capella · Pléiades · WorldView)
+    - identity · archives · mosaics · radiometry
+  |
+  raster_res: |md
+    ### SceneRasterResolver
+    _[COMPONENT]_
+    - read_scene_window · working raster
+    - VRT · pansharpen
+  |
+  geo: ||md
+    ### SceneGeoModel
+    _[COMPONENT]_
+    - affine | gcp_tps · sensor_geometry
+    - footprints (TPS densification)
+  ||
+  jobs: |md
+    ### Background job manager
+    _[COMPONENT]_
+    - scheduler · store · processes
+    - durable jobs · cancel / resume
+    - isolated worker processes
+  |
+  dsvc: |md
+    ### Dataset & export services
+    _[COMPONENT]_
+    - gsd_tiler · dataset_audit
+    - export_sidecars · attribute_engine
+    - nitf: ingest · metadata
+  |
+}
+
+infrastructure_local_runtime: "Infrastructure · local runtime" {
+  source_pkgs: |md
+    ### Source imagery packages
+    _[READ-ONLY]_
+    - GeoTIFF · COG · EO/SAR · NITF
+    - unmodified sources
+  |
+  raster: |md
+    ### Raster processing
+    _[GDAL]_
+    - GDAL / rasterio · PROJ
+  |
+  storage: |md
+    ### Project storage
+    _[READ / WRITE]_
+    - scene manifests · source annotations
+    - metadata-only tile catalogs
+    - dataset runs · derived_scenes (overviews · full-res COG)
+  |
+  ai: |md
+    ### AI runtime
+    _[LOCAL · OFFLINE]_
+    - SAM · DINO · YOLO (training/prediction)
+    - user-configured model repository
+  |
+}
+
+# przeplywy
+input -> backend_fastapi_bundled_runtime.scene_res: "import / scan"
+desktop_application_offline.tauri -> desktop_application_offline.react: "embeds (WebView)"
+desktop_application_offline.tauri -> backend_fastapi_bundled_runtime.routers: "launches sidecar"
+desktop_application_offline.react -> backend_fastapi_bundled_runtime.routers: "HTTP/JSON + SSE · localhost · session token"
+backend_fastapi_bundled_runtime.routers -> backend_fastapi_bundled_runtime.scene_res: "delegates"
+backend_fastapi_bundled_runtime.routers -> backend_fastapi_bundled_runtime.raster_res: "delegates"
+backend_fastapi_bundled_runtime.routers -> backend_fastapi_bundled_runtime.dsvc: "delegates"
+backend_fastapi_bundled_runtime.routers -> backend_fastapi_bundled_runtime.jobs: "delegates"
+backend_fastapi_bundled_runtime.scene_res -> infrastructure_local_runtime.source_pkgs: "read-only"
+backend_fastapi_bundled_runtime.raster_res -> infrastructure_local_runtime.raster: "GDAL / rasterio"
+backend_fastapi_bundled_runtime.geo -> infrastructure_local_runtime.storage: "footprints"
+backend_fastapi_bundled_runtime.dsvc -> infrastructure_local_runtime.storage: "dataset runs"
+backend_fastapi_bundled_runtime.dsvc -> infrastructure_local_runtime.ai: "inference / training"
+backend_fastapi_bundled_runtime.dsvc -> output: "export"

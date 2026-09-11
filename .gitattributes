@@ -1,0 +1,25 @@
+# Swiadomie NIE normalizujemy koncow linii. Drzewo jest mieszane (161 plikow CRLF,
+# 508 LF, 20 z obiema postaciami naraz), a hurtowa normalizacja przepisalaby kazdy plik
+# i zamaskowala prawdziwe zmiany w pierwszych commitach.
+#
+# `* -text` jest tu KONIECZNE, nie kosmetyczne. Domyslna instalacja Git for Windows
+# ustawia `core.autocrlf=true` na poziomie systemu, wiec bez tej linii git zamienialby
+# LF na CRLF przy kazdym checkoucie — miedzy innymi w `LICENSE`, ktorego zgodnosc
+# bajt w bajt z tekstem FSF (sha256 0d96a4ff...) jest tu punktem, a nie szczegolem.
+# Atrybut w repozytorium dziala u wszystkich, niezaleznie od ich konfiguracji.
+* -text
+
+# Binaria dodatkowo bez diffa tekstowego.
+
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.ico     binary
+*.mp4     binary
+*.parquet binary
+*.pdf     binary
+*.zip     binary
+*.woff    binary
+*.woff2   binary
+*.ttf     binary

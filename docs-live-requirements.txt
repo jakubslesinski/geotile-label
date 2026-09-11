@@ -1,0 +1,1 @@
+mkdocs-live-edit-plugin==0.4.1

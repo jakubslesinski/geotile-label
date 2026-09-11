@@ -1,0 +1,54 @@
+{
+  "id": "v04",
+  "claim": "C1",
+  "title": "Przeciek przestrzenny (mechanizm): random_tile vs spatial_block_split",
+  "status": "pass",
+  "substrate": [
+    "xView3"
+  ],
+  "tier": "public",
+  "metrics": {
+    "n_tiles": 7627,
+    "n_scenes": 3,
+    "tile_side_m": 18600.6,
+    "random": {
+      "n_train": 5338,
+      "n_holdout": 2289,
+      "train_overlap": 5171,
+      "train_adjacent": 5338
+    },
+    "spatial": {
+      "n_train": 5327,
+      "n_holdout": 2300,
+      "train_overlap": 818,
+      "train_adjacent": 2184
+    },
+    "spatial_buffered": {
+      "n_train": 2800,
+      "n_holdout": 2300,
+      "train_overlap": 0,
+      "train_adjacent": 0
+    },
+    "overlap_reduction_pct": 100.0
+  },
+  "artifacts": [
+    "results/leakage_counts.csv"
+  ],
+  "config": {
+    "n_scenes": 3,
+    "tile_size": 1024,
+    "buffer": 512,
+    "block_size_tiles": 5,
+    "spatial_buffer_tiles": 2,
+    "seed": 42
+  },
+  "notes": "7627 kafli / 3 scen xView3 (nachodzenie buffer=512px). Kafle treningowe nachodzące na val/test — random=5171, spatial=818, spatial+buffer=0; sąsiadujące — random=5338, spatial+buffer=0. Redukcja nachodzenia (random->spatial+buffer) = 100.0%.",
+  "timestamp": "2026-09-09T11:06:42.812824+00:00",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "app_rev": "6cf3028",
+    "app_fingerprint": "7ca623b59cdc3ee8:258",
+    "app_version": "1.4.0"
+  }
+}

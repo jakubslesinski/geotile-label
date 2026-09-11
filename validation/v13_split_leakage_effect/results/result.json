@@ -1,0 +1,45 @@
+{
+  "id": "v13",
+  "claim": "C1",
+  "title": "Skutek przecieku: luka mAP random − spatial",
+  "status": "pass",
+  "substrate": [
+    "FAIR1M",
+    "DOTA"
+  ],
+  "tier": "public",
+  "metrics": {
+    "project": "FAIR1M",
+    "base_model": "yolo26n-obb.pt",
+    "epochs": 50,
+    "seed": 42,
+    "task": "obb",
+    "config_consistent": true,
+    "random_run": "20260825T070354524430Z_1b27c26c",
+    "spatial_run": "20260825T074034311691Z_0fcb5e4b",
+    "map50_random": 0.330354,
+    "map50_spatial": 0.268325,
+    "map_gap_pp": 0.062029,
+    "map5095_random": 0.270892,
+    "map5095_spatial": 0.212169,
+    "map5095_gap_pp": 0.058722
+  },
+  "artifacts": [
+    "results/leakage_effect.csv"
+  ],
+  "config": {
+    "candidates": [
+      "FAIR1M",
+      "DOTA"
+    ]
+  },
+  "notes": "FAIR1M OBB (yolo26n-obb.pt, 50 epok, seed 42): mAP50 random=0.3304 vs spatial=0.2683 -> luka +0.0620 (mAP50-95 luka +0.0587); random > spatial (zawyżenie przez przeciek). Konfiguracja spójna=True.",
+  "timestamp": "2026-09-09T11:10:38.961615+00:00",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "app_rev": "6cf3028",
+    "app_fingerprint": "7ca623b59cdc3ee8:258",
+    "app_version": "1.4.0"
+  }
+}

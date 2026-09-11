@@ -1,0 +1,78 @@
+{
+  "id": "v10",
+  "claim": "C2a",
+  "title": "Wierność importu benchmarku (lossless canonicalization)",
+  "status": "pass",
+  "substrate": [
+    "DOTA",
+    "DIOR-R",
+    "FAIR1M"
+  ],
+  "tier": "public",
+  "metrics": {
+    "n_scenes": 900,
+    "n_pairs": 51530,
+    "n_degenerate": 40,
+    "n_nonconvex": 1,
+    "vertex_dev_max_px": 0.000701,
+    "iou_p50": 1.0,
+    "iou_min_nondegenerate": 0.999532,
+    "class_match_pct": 100.0,
+    "count_match_pct": 100.0,
+    "per_dataset": {
+      "FAIR1M": {
+        "n_scenes": 300,
+        "n_pairs": 15157,
+        "n_degenerate": 40,
+        "n_nonconvex": 0,
+        "n_missing_label": 0,
+        "vertex_dev_max_px": 0.000701,
+        "iou_p50": 0.999972,
+        "iou_min": 0.999532,
+        "class_match_pct": 100.0,
+        "count_match_pct": 100.0
+      },
+      "DOTA": {
+        "n_scenes": 300,
+        "n_pairs": 34439,
+        "n_degenerate": 0,
+        "n_nonconvex": 1,
+        "n_missing_label": 0,
+        "vertex_dev_max_px": 0.0,
+        "iou_p50": 1.0,
+        "iou_min": 1.0,
+        "class_match_pct": 100.0,
+        "count_match_pct": 100.0
+      },
+      "DIOR-R": {
+        "n_scenes": 300,
+        "n_pairs": 1934,
+        "n_degenerate": 0,
+        "n_nonconvex": 0,
+        "n_missing_label": 0,
+        "vertex_dev_max_px": 0.0,
+        "iou_p50": 1.0,
+        "iou_min": 1.0,
+        "class_match_pct": 100.0,
+        "count_match_pct": 100.0
+      }
+    }
+  },
+  "artifacts": [
+    "results/import_fidelity.csv"
+  ],
+  "config": {
+    "scenes_per_dataset": 300,
+    "sample_seed": 20260824,
+    "iou_pass": 0.999
+  },
+  "notes": "Import bezstratny na 900 scenach / 51571 obiektach (FAIR1M:300, DOTA:300, DIOR-R:300): maks. odchylenie wierzchołków=0.0007007 px, klasy=100.0%, liczności=100.0%; IoU (wypukłe niezdegenerowane, n=51530) min=0.999532, p50=1.0. Pominięte w IoU (nie w werdykcie bezstratności): 40 zdegenerowanych (zerowe pole, przycięte przy krawędzi) + 1 niewypukłych quadów źródła — wszystkie zapisane wiernie (odchylenie ≈0).",
+  "timestamp": "2026-09-09T11:09:16.986911+00:00",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "app_rev": "6cf3028",
+    "app_fingerprint": "7ca623b59cdc3ee8:258",
+    "app_version": "1.4.0"
+  }
+}

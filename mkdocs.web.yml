@@ -1,0 +1,14 @@
+INHERIT: mkdocs.yml
+
+# Konfiguracja dla serwisu publikowanego na GitHub Pages.
+#
+# Rozni sie od `mkdocs.yml` jedna rzecza — `site_url` — i wlasnie dlatego jest osobnym
+# plikiem. `site_url` daje poprawna `sitemap.xml` i odnosniki kanoniczne, ale wstawia do
+# kazdej strony `<link rel="canonical" href="https://...">`. Budowa pakowana do instalatora
+# nie moze miec zadnego odwolania do sieci: `scripts/validate-docs.ps1` odrzuca ja wtedy
+# komunikatem "External runtime assets were detected in generated HTML", bo pomoc pod F1
+# ma dzialac bez sieci.
+#
+# Uzycie (tak wola workflow `.github/workflows/docs.yml`):
+#     mkdocs build --strict --config-file mkdocs.web.yml
+site_url: https://jakubslesinski.github.io/geotile-label/

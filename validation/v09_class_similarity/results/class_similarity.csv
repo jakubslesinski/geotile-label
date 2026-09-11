@@ -1,0 +1,529 @@
+class_a,class_b,similarity,confusion_count
+Small Car,Van,0.9955,4591
+Van,other-vehicle,0.9892,379
+Small Car,other-vehicle,0.9881,314
+A321,Boeing737,0.9795,8
+A220,Boeing737,0.9794,22
+A220,A321,0.9762,13
+Dry Cargo Ship,Liquid Cargo Ship,0.9756,94
+Cargo Truck,Dump Truck,0.9649,103
+Dry Cargo Ship,Engineering Ship,0.9647,60
+Liquid Cargo Ship,Tugboat,0.9641,6
+Engineering Ship,Liquid Cargo Ship,0.9622,22
+Motorboat,other-ship,0.9553,120
+Dump Truck,Van,0.9545,1772
+Dump Truck,Small Car,0.9537,2097
+A220,other-airplane,0.9529,39
+Boeing737,other-airplane,0.9504,2
+Fishing Boat,other-ship,0.9473,105
+A321,other-airplane,0.947,10
+Bus,Dump Truck,0.9464,5
+Bus,Cargo Truck,0.9461,40
+Engineering Ship,Tugboat,0.9446,15
+Dry Cargo Ship,Tugboat,0.944,32
+Cargo Truck,Trailer,0.9398,13
+Dump Truck,Excavator,0.9392,13
+Tugboat,other-ship,0.9366,27
+Dump Truck,other-vehicle,0.9342,65
+Liquid Cargo Ship,other-ship,0.9316,46
+Fishing Boat,Tugboat,0.9301,34
+Fishing Boat,Liquid Cargo Ship,0.9208,47
+Passenger Ship,Tugboat,0.913,9
+Truck Tractor,Van,0.9123,4
+Cargo Truck,Van,0.9117,545
+Bus,Excavator,0.911,0
+Fishing Boat,Motorboat,0.9069,77
+Engineering Ship,other-ship,0.9061,38
+Dry Cargo Ship,other-ship,0.9045,110
+Dump Truck,Truck Tractor,0.9019,5
+Cargo Truck,Excavator,0.9017,3
+Engineering Ship,Fishing Boat,0.9007,33
+Small Car,Truck Tractor,0.9002,5
+Dry Cargo Ship,Fishing Boat,0.9001,196
+Motorboat,Tugboat,0.8997,27
+Motorboat,other-vehicle,0.8989,2
+Cargo Truck,Small Car,0.8987,141
+Cargo Truck,other-vehicle,0.8968,21
+Liquid Cargo Ship,Passenger Ship,0.8948,17
+Truck Tractor,other-vehicle,0.8933,2
+Liquid Cargo Ship,Warship,0.8923,8
+Motorboat,Van,0.8911,5
+Dry Cargo Ship,Warship,0.8902,17
+Motorboat,Small Car,0.8895,4
+Dry Cargo Ship,Passenger Ship,0.8893,58
+Excavator,Truck Tractor,0.8869,1
+Dump Truck,Motorboat,0.8868,1
+Excavator,Small Car,0.8839,2
+Excavator,Van,0.8835,4
+Cargo Truck,Truck Tractor,0.883,1
+Dump Truck,Trailer,0.8823,13
+Engineering Ship,Passenger Ship,0.8815,10
+Boeing737,Fishing Boat,0.8811,0
+Dump Truck,Tugboat,0.8798,1
+Bus,Van,0.8797,29
+Liquid Cargo Ship,Motorboat,0.8785,27
+Boeing737,Boeing787,0.878,1
+Bus,Trailer,0.8775,5
+Cargo Truck,Motorboat,0.8768,5
+Cargo Truck,Tugboat,0.8764,0
+Intersection,Trailer,0.8751,0
+A321,Boeing787,0.8739,4
+Bus,Small Car,0.8738,2
+A220,Fishing Boat,0.8714,0
+A220,Boeing787,0.8638,1
+Dry Cargo Ship,Motorboat,0.8623,77
+Bus,other-vehicle,0.8618,4
+Cargo Truck,Liquid Cargo Ship,0.8618,0
+Bus,Motorboat,0.8592,0
+A321,Fishing Boat,0.8589,0
+ARJ21,other-airplane,0.8588,3
+Tugboat,Warship,0.8587,3
+Engineering Ship,Warship,0.8582,10
+Cargo Truck,Dry Cargo Ship,0.8569,4
+Football Field,Tennis Court,0.8555,1
+Engineering Ship,Motorboat,0.8543,19
+Cargo Truck,Intersection,0.8539,0
+Excavator,other-vehicle,0.8537,1
+Dump Truck,Fishing Boat,0.8527,1
+Bus,Tugboat,0.8497,0
+Cargo Truck,Fishing Boat,0.8491,3
+Dump Truck,Liquid Cargo Ship,0.8472,1
+Fishing Boat,Passenger Ship,0.8466,56
+Dump Truck,other-ship,0.8446,1
+Excavator,Trailer,0.8432,1
+Bus,Truck Tractor,0.8391,0
+Bus,Fishing Boat,0.8386,0
+Excavator,Tugboat,0.8385,0
+Dry Cargo Ship,Trailer,0.8379,0
+Excavator,Fishing Boat,0.836,0
+Fishing Boat,other-airplane,0.836,0
+Bus,Liquid Cargo Ship,0.8342,0
+Boeing787,other-airplane,0.8329,1
+Warship,other-ship,0.8314,16
+Excavator,Liquid Cargo Ship,0.83,0
+Boeing737,other-ship,0.8296,0
+Cargo Truck,other-ship,0.8296,6
+Cargo Truck,Passenger Ship,0.8295,0
+Cargo Truck,Engineering Ship,0.8283,0
+Trailer,Warship,0.8277,0
+Dry Cargo Ship,Dump Truck,0.8275,0
+Bridge,Intersection,0.8274,2
+Excavator,Motorboat,0.8272,0
+Cargo Truck,Warship,0.8253,0
+Dump Truck,Intersection,0.8244,0
+Liquid Cargo Ship,Trailer,0.8236,0
+Bus,other-ship,0.8228,0
+Small Car,other-ship,0.8228,0
+Small Car,Tugboat,0.8224,0
+A220,other-ship,0.8222,0
+Passenger Ship,other-ship,0.822,32
+Dry Cargo Ship,Intersection,0.8218,0
+Fishing Boat,Small Car,0.8218,0
+Fishing Boat,Van,0.8217,0
+Dump Truck,Engineering Ship,0.8212,0
+Van,other-ship,0.8212,1
+other-ship,other-vehicle,0.8207,0
+Boeing737,Motorboat,0.8204,0
+Tugboat,Van,0.8204,1
+A220,Liquid Cargo Ship,0.8191,0
+Fishing Boat,other-vehicle,0.8186,0
+Bus,Dry Cargo Ship,0.8172,0
+Excavator,Intersection,0.817,0
+Trailer,Tugboat,0.8168,0
+Boeing737,Liquid Cargo Ship,0.8155,0
+Boeing737,Tugboat,0.8155,0
+Dump Truck,Passenger Ship,0.8151,0
+Excavator,other-ship,0.8147,0
+A220,ARJ21,0.814,1
+Motorboat,Warship,0.8131,2
+Trailer,Van,0.8123,13
+A220,Motorboat,0.8115,0
+Engineering Ship,Excavator,0.8115,0
+A220,Tugboat,0.8106,0
+Dry Cargo Ship,Excavator,0.8105,0
+Bus,Intersection,0.8097,0
+Intersection,Liquid Cargo Ship,0.8097,0
+Passenger Ship,Warship,0.8096,6
+Tugboat,other-vehicle,0.8089,0
+Boeing737,Dump Truck,0.8087,0
+Trailer,Truck Tractor,0.808,1
+A321,other-ship,0.8064,0
+ARJ21,Boeing737,0.8032,0
+Intersection,Truck Tractor,0.8018,0
+Small Car,Trailer,0.8018,3
+A220,Dump Truck,0.8008,0
+A321,ARJ21,0.8005,0
+Fishing Boat,Intersection,0.7996,0
+Bus,Engineering Ship,0.7992,0
+Motorboat,Passenger Ship,0.7984,36
+Boeing737,Cargo Truck,0.7982,0
+Trailer,other-vehicle,0.798,5
+Boeing737,Engineering Ship,0.7976,0
+Intersection,Tugboat,0.7975,0
+A321,Motorboat,0.7967,0
+Motorboat,Truck Tractor,0.7967,0
+Basketball Court,Truck Tractor,0.7957,0
+Boeing737,Bus,0.7956,0
+Motorboat,Trailer,0.795,0
+Engineering Ship,Trailer,0.7945,0
+Fishing Boat,Warship,0.7943,3
+Boeing737,Dry Cargo Ship,0.7939,0
+Engineering Ship,Intersection,0.7936,0
+A220,Engineering Ship,0.793,0
+A220,Bus,0.7929,0
+A220,Cargo Truck,0.7923,0
+A220,Dry Cargo Ship,0.7907,0
+Bridge,Trailer,0.7894,0
+Bus,Passenger Ship,0.789,0
+A321,Liquid Cargo Ship,0.7879,0
+Boeing737,Excavator,0.7862,0
+other-airplane,other-ship,0.783,0
+Basketball Court,Intersection,0.7816,0
+Passenger Ship,Trailer,0.7816,0
+A321,Tugboat,0.781,0
+Liquid Cargo Ship,Small Car,0.78,0
+Liquid Cargo Ship,Van,0.7797,0
+Fishing Boat,Truck Tractor,0.7796,0
+Dump Truck,other-airplane,0.7785,0
+Bus,Warship,0.778,0
+Tugboat,other-airplane,0.7748,0
+A220,Excavator,0.7743,0
+A321,Dump Truck,0.7742,0
+Fishing Boat,Trailer,0.7741,0
+Boeing737,Small Car,0.7738,0
+Dump Truck,Warship,0.7733,0
+A321,Bus,0.772,0
+Boeing737,Van,0.772,0
+Liquid Cargo Ship,other-airplane,0.7712,0
+Football Field,Intersection,0.7704,0
+Boeing737,other-vehicle,0.7698,0
+Dry Cargo Ship,Small Car,0.7689,0
+Dry Cargo Ship,Van,0.7684,0
+Motorboat,other-airplane,0.7677,0
+A321,Cargo Truck,0.7674,0
+A220,A330,0.7672,0
+Boeing737,Intersection,0.7672,0
+Liquid Cargo Ship,other-vehicle,0.767,1
+Engineering Ship,Small Car,0.7669,0
+A220,C919,0.7661,0
+Intersection,Van,0.766,0
+A321,Dry Cargo Ship,0.7646,0
+Engineering Ship,Van,0.7637,0
+A220,Small Car,0.7632,0
+Intersection,Warship,0.7625,0
+A321,Engineering Ship,0.7619,0
+Basketball Court,Cargo Truck,0.7617,1
+Baseball Field,Intersection,0.7616,0
+Intersection,Small Car,0.7616,0
+A220,Van,0.7598,0
+Excavator,Passenger Ship,0.7592,0
+Dry Cargo Ship,other-vehicle,0.7587,0
+A220,other-vehicle,0.7581,0
+Engineering Ship,other-airplane,0.7573,0
+A220,Intersection,0.7567,0
+Bus,other-airplane,0.7559,0
+Truck Tractor,Tugboat,0.7559,0
+Boeing787,Fishing Boat,0.7539,0
+Truck Tractor,other-ship,0.7537,0
+Engineering Ship,other-vehicle,0.753,0
+Intersection,other-ship,0.7528,0
+Basketball Court,Trailer,0.7524,0
+Excavator,other-airplane,0.7524,0
+Trailer,other-ship,0.7516,0
+Basketball Court,Excavator,0.7512,0
+Intersection,other-vehicle,0.7509,0
+A330,Boeing787,0.75,4
+A321,A330,0.7499,2
+Dry Cargo Ship,other-airplane,0.7499,0
+A321,Excavator,0.7486,0
+A330,other-airplane,0.748,6
+Intersection,Motorboat,0.747,0
+Boeing737,Trailer,0.7462,0
+A330,Boeing737,0.746,2
+Small Car,other-airplane,0.7459,0
+C919,other-airplane,0.7456,0
+Cargo Truck,other-airplane,0.7453,0
+Basketball Court,Dump Truck,0.7448,0
+Intersection,Passenger Ship,0.7443,0
+A321,Small Car,0.7426,0
+A321,other-vehicle,0.7422,0
+Intersection,Tennis Court,0.742,0
+A321,Intersection,0.7418,0
+A220,Trailer,0.7405,0
+Bridge,Dry Cargo Ship,0.7404,0
+Boeing737,Passenger Ship,0.74,0
+Van,other-airplane,0.74,0
+A321,Van,0.7389,0
+Liquid Cargo Ship,Truck Tractor,0.7382,0
+A220,Passenger Ship,0.7381,0
+Intersection,other-airplane,0.7358,0
+other-airplane,other-vehicle,0.7338,0
+Basketball Court,Bus,0.7336,0
+A330,Liquid Cargo Ship,0.7316,0
+Basketball Court,Van,0.7297,0
+A321,C919,0.7296,0
+Bridge,Warship,0.729,0
+Boeing737,Truck Tractor,0.7285,0
+Passenger Ship,Van,0.728,0
+Dry Cargo Ship,Truck Tractor,0.7262,0
+Boeing737,C919,0.7261,0
+Passenger Ship,Small Car,0.7258,0
+Bridge,Cargo Truck,0.7229,0
+Boeing737,Warship,0.7203,0
+Excavator,Warship,0.7198,0
+A330,Dry Cargo Ship,0.7186,0
+Baseball Field,Football Field,0.7185,0
+A220,Truck Tractor,0.7178,0
+Boeing787,Intersection,0.7144,0
+Basketball Court,Small Car,0.7141,0
+Van,Warship,0.714,0
+Bridge,Liquid Cargo Ship,0.7139,0
+A321,Trailer,0.7134,0
+Passenger Ship,other-vehicle,0.713,0
+A220,Warship,0.7124,0
+Engineering Ship,Truck Tractor,0.7102,0
+Small Car,Warship,0.7064,0
+Passenger Ship,other-airplane,0.7061,0
+Warship,other-vehicle,0.7057,0
+Bridge,Engineering Ship,0.7047,0
+Boeing787,other-ship,0.7028,0
+A321,Passenger Ship,0.7015,0
+Basketball Court,other-vehicle,0.7015,0
+Boeing787,Liquid Cargo Ship,0.7008,0
+Baseball Field,Dry Cargo Ship,0.6988,0
+A321,Truck Tractor,0.6975,0
+Boeing787,Dry Cargo Ship,0.694,0
+Bridge,Bus,0.6939,0
+Boeing787,Tugboat,0.6911,0
+A330,Engineering Ship,0.6896,0
+Boeing787,Cargo Truck,0.6892,0
+Boeing787,Engineering Ship,0.6892,0
+A321,Warship,0.6887,0
+A330,Tugboat,0.6881,0
+Dry Cargo Ship,Football Field,0.6878,0
+Boeing787,Motorboat,0.6858,0
+A330,Warship,0.6857,0
+Cargo Truck,Tractor,0.6857,0
+A330,Fishing Boat,0.6855,0
+A330,Intersection,0.6853,0
+Truck Tractor,other-airplane,0.6851,0
+Baseball Field,Warship,0.685,0
+A330,Trailer,0.6847,0
+Engineering Ship,Football Field,0.6831,0
+Bridge,Tugboat,0.6829,0
+Trailer,other-airplane,0.6823,0
+A330,other-ship,0.678,0
+Basketball Court,Fishing Boat,0.6779,0
+Excavator,Tractor,0.6778,0
+Baseball Field,Bridge,0.6775,0
+Cargo Truck,Tennis Court,0.6754,0
+Basketball Court,Liquid Cargo Ship,0.6753,0
+Boeing787,Dump Truck,0.6749,0
+Warship,other-airplane,0.6749,0
+Basketball Court,Tugboat,0.6747,0
+Basketball Court,Bridge,0.6745,0
+Passenger Ship,Truck Tractor,0.6744,0
+ARJ21,Boeing787,0.6742,0
+Bridge,Dump Truck,0.6739,0
+ARJ21,Fishing Boat,0.6737,0
+Football Field,Liquid Cargo Ship,0.6733,0
+Bridge,Excavator,0.672,0
+Baseball Field,Liquid Cargo Ship,0.6699,0
+C919,Liquid Cargo Ship,0.6691,0
+Dump Truck,Tractor,0.669,1
+Tennis Court,Trailer,0.6682,0
+Baseball Field,Engineering Ship,0.6681,0
+Bridge,Football Field,0.665,0
+Fishing Boat,Football Field,0.6649,0
+Truck Tractor,Warship,0.6641,0
+Basketball Court,Dry Cargo Ship,0.6629,0
+Boeing787,Excavator,0.6626,0
+Football Field,Tugboat,0.6624,0
+Tractor,Truck Tractor,0.6609,0
+A330,Cargo Truck,0.6586,0
+Boeing787,Bus,0.6581,0
+Boeing787,Trailer,0.6565,0
+A330,Passenger Ship,0.6559,0
+C919,other-ship,0.6541,0
+Boeing787,Passenger Ship,0.6539,0
+Basketball Court,Engineering Ship,0.6537,0
+Basketball Court,other-ship,0.6536,0
+Basketball Court,Tennis Court,0.6533,2
+ARJ21,C919,0.6523,0
+A330,Bus,0.6511,0
+Bridge,Passenger Ship,0.6499,0
+Boeing787,Van,0.6497,0
+Basketball Court,Motorboat,0.6493,0
+Baseball Field,Fishing Boat,0.6492,0
+ARJ21,Liquid Cargo Ship,0.6488,0
+Boeing787,other-vehicle,0.6482,0
+Boeing787,Small Car,0.6476,0
+ARJ21,Engineering Ship,0.6465,0
+Tractor,Trailer,0.6435,0
+Boeing787,Truck Tractor,0.6426,0
+A330,Motorboat,0.6417,0
+A330,C919,0.6402,0
+Baseball Field,Passenger Ship,0.6402,0
+Baseball Field,Tugboat,0.6397,0
+Bus,Tractor,0.6393,0
+A330,Dump Truck,0.6381,0
+C919,Dry Cargo Ship,0.6381,0
+Dry Cargo Ship,Tennis Court,0.638,1
+ARJ21,Dry Cargo Ship,0.6379,0
+Basketball Court,Warship,0.6378,0
+A330,ARJ21,0.6375,0
+Tennis Court,Tugboat,0.6373,0
+ARJ21,Tugboat,0.6342,0
+Basketball Court,Boeing737,0.6338,0
+ARJ21,Dump Truck,0.6331,0
+ARJ21,Intersection,0.6323,0
+C919,Fishing Boat,0.6318,0
+Cargo Truck,Football Field,0.6317,0
+Baseball Field,Cargo Truck,0.6315,0
+Engineering Ship,Tennis Court,0.6312,0
+Dump Truck,Tennis Court,0.6308,0
+Bus,C919,0.6305,0
+Football Field,other-ship,0.6305,0
+Basketball Court,Football Field,0.63,0
+Bridge,Tennis Court,0.6296,0
+Boeing787,Warship,0.6284,0
+Baseball Field,Tennis Court,0.6275,0
+Liquid Cargo Ship,Tennis Court,0.6266,0
+Baseball Field,Trailer,0.6259,0
+A220,Basketball Court,0.6253,0
+Tennis Court,Van,0.6249,0
+C919,Tugboat,0.6233,0
+ARJ21,Bus,0.6231,0
+C919,Motorboat,0.6231,0
+Bridge,other-ship,0.6229,0
+Tennis Court,other-vehicle,0.6229,0
+Small Car,Tractor,0.6217,0
+Tractor,Van,0.6209,1
+Tennis Court,Truck Tractor,0.6207,0
+Bridge,Motorboat,0.619,0
+Small Car,Tennis Court,0.6189,0
+C919,Engineering Ship,0.6178,0
+ARJ21,Cargo Truck,0.6162,0
+Bridge,Fishing Boat,0.616,0
+Intersection,Tractor,0.6158,0
+A330,Excavator,0.6156,0
+Fishing Boat,Tennis Court,0.6142,0
+Baseball Field,other-ship,0.6136,0
+Football Field,Trailer,0.6117,0
+Dry Cargo Ship,Tractor,0.6114,0
+A220,Football Field,0.6112,0
+A330,Bridge,0.6112,0
+ARJ21,Excavator,0.6106,0
+Boeing737,Football Field,0.6098,0
+Football Field,Warship,0.6075,0
+Tennis Court,other-ship,0.6066,0
+Baseball Field,Boeing737,0.6065,0
+ARJ21,other-ship,0.6063,0
+C919,Dump Truck,0.6053,0
+Bridge,Van,0.6044,0
+Motorboat,Tennis Court,0.6032,0
+Basketball Court,Passenger Ship,0.6031,0
+A321,Basketball Court,0.6017,0
+Tractor,other-vehicle,0.6012,0
+Dump Truck,Football Field,0.6011,0
+A321,Football Field,0.6009,0
+Bridge,Truck Tractor,0.5993,0
+Liquid Cargo Ship,Tractor,0.5989,0
+Tractor,Tugboat,0.5967,0
+Boeing787,Football Field,0.5965,0
+Bridge,Small Car,0.5962,0
+ARJ21,Motorboat,0.5948,0
+Baseball Field,other-airplane,0.5946,0
+Basketball Court,other-airplane,0.5941,0
+Football Field,other-airplane,0.5935,0
+C919,Excavator,0.5912,0
+A321,Baseball Field,0.5901,0
+ARJ21,Trailer,0.5895,0
+Bus,Tennis Court,0.5893,0
+Bridge,other-vehicle,0.5883,0
+Football Field,Passenger Ship,0.5881,0
+C919,Cargo Truck,0.588,0
+Engineering Ship,Tractor,0.5861,0
+Fishing Boat,Tractor,0.5853,0
+Tennis Court,Warship,0.5841,0
+Boeing787,C919,0.584,0
+Boeing737,Bridge,0.5833,0
+Football Field,Van,0.5827,0
+Football Field,Small Car,0.5822,0
+Baseball Field,Motorboat,0.5814,0
+A220,Bridge,0.5805,0
+C919,Warship,0.5805,0
+Baseball Field,Boeing787,0.5801,0
+Baseball Field,Dump Truck,0.5795,0
+Basketball Court,Boeing787,0.5795,0
+Baseball Field,Bus,0.5793,0
+ARJ21,Passenger Ship,0.5792,0
+A220,Baseball Field,0.5788,0
+Football Field,Motorboat,0.5785,0
+A330,Baseball Field,0.5775,0
+Football Field,other-vehicle,0.5767,0
+Football Field,Truck Tractor,0.5764,0
+Motorboat,Tractor,0.5753,0
+ARJ21,Warship,0.5745,0
+A330,Van,0.5744,0
+C919,Small Car,0.5742,0
+Excavator,Tennis Court,0.5742,0
+A330,Small Car,0.5734,0
+ARJ21,Small Car,0.5732,0
+ARJ21,Football Field,0.5718,0
+Boeing737,Tractor,0.5716,0
+A220,Tractor,0.571,0
+ARJ21,Van,0.5705,0
+A330,other-vehicle,0.5686,0
+C919,Van,0.5662,0
+Bus,Football Field,0.5633,0
+A321,Bridge,0.5612,0
+Excavator,Football Field,0.5608,0
+Boeing737,Tennis Court,0.5595,0
+ARJ21,other-vehicle,0.5593,0
+Tractor,other-ship,0.5591,0
+A330,Basketball Court,0.5587,0
+Tractor,other-airplane,0.5575,0
+C919,other-vehicle,0.555,0
+Baseball Field,Basketball Court,0.5516,0
+A220,Tennis Court,0.5515,0
+Bridge,other-airplane,0.5507,0
+A330,Football Field,0.5505,0
+ARJ21,Baseball Field,0.5486,0
+Passenger Ship,Tractor,0.5486,0
+A321,Tractor,0.5452,0
+C919,Trailer,0.5434,0
+Baseball Field,Excavator,0.5424,0
+Passenger Ship,Tennis Court,0.5396,0
+A321,Tennis Court,0.5387,0
+A330,Truck Tractor,0.5368,0
+Boeing787,Tractor,0.536,0
+ARJ21,Truck Tractor,0.5359,0
+C919,Intersection,0.5341,0
+Boeing787,Bridge,0.5307,0
+Baseball Field,Van,0.5268,0
+Basketball Court,Tractor,0.5255,0
+Boeing787,Tennis Court,0.5241,0
+ARJ21,Bridge,0.5181,0
+Baseball Field,Small Car,0.5171,0
+C919,Passenger Ship,0.5153,0
+Tractor,Warship,0.5147,0
+Baseball Field,Truck Tractor,0.5071,0
+Tennis Court,other-airplane,0.5048,0
+Baseball Field,other-vehicle,0.5011,0
+ARJ21,Basketball Court,0.4974,0
+C919,Truck Tractor,0.4789,0
+ARJ21,Tennis Court,0.4756,0
+A330,Tennis Court,0.4705,0
+Bridge,C919,0.4604,0
+Bridge,Tractor,0.4537,0
+A330,Tractor,0.4509,0
+C919,Tractor,0.4478,0
+Baseball Field,Tractor,0.4394,0
+ARJ21,Tractor,0.4381,0
+Basketball Court,C919,0.4367,0
+Tennis Court,Tractor,0.4354,0
+C919,Football Field,0.4265,0
+Football Field,Tractor,0.4205,0
+Baseball Field,C919,0.4169,0
+C919,Tennis Court,0.3904,0

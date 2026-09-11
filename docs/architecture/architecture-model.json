@@ -1,0 +1,1325 @@
+{
+  "schema_name": "geotile_architecture_model",
+  "schema_version": 1,
+  "_meta": {
+    "purpose": "Jedno zrodlo TRESCI dla trzech konsumentow: rysunkow artykulu (Figma -> SVG), interaktywnego explorera i generowanych zrodel d2. Uklad NIE jest tu opisany - zostaje recznie w Figmie i w explorer.html.",
+    "decisions": "DESIGN_DECISIONS.md, architecture-diagrams",
+    "appears_in": "Kazdy element deklaruje, gdzie ma sie pojawic. Bramka porownuje kazdy artefakt TYLKO z tym, co dla niego oznaczone - dzieki temu odroznia zamierzone uproszczenie od przeoczenia.",
+    "extra_fields": "Pola `attrs_explorer` / `items_explorer` / `parts_explorer` niosa tresc, ktora trafia WYLACZNIE do explorera. Rysunki artykulu uzywaja `attrs` / `items` / `parts`.",
+    "language": "`title` jest angielski i podlega bramce w obu konsumentach. `summary_pl` uzywa wylacznie explorer. `summary_en` jest poza zakresem tej iteracji."
+  },
+  "stereotypes": {
+    "canonical": "«canonical»",
+    "derived": "«derived»",
+    "export": "«export»",
+    "source": "«source»"
+  },
+  "entities": {
+    "Scene": {
+      "title": "Scene",
+      "layer": "canonical",
+      "stereotype": "canonical",
+      "summary_pl": "Kanoniczna scena zrodlowa - referencja do rastra, model geometrii i metadane. Nie jest kopiowana.",
+      "attrs": [
+        "source_scene_uid",
+        "format: GeoTIFF·JP2·NITF·PNG·JPEG",
+        "SceneGeoModel: affine | gcp_tps",
+        "manifest: geometry/metadata/source_identity",
+        "gsd_m (optional)"
+      ],
+      "docs": [
+        "From scene to dataset"
+      ],
+      "source": [
+        "SceneGeoModel",
+        "scene_manifest"
+      ],
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ],
+      "_note": "COG swiadomie NIE jest formatem zrodlowym - jest publikowanym derywatem, patrz WorkingView.display asset (decyzja 2 z etapu 1)."
+    },
+    "SourceAnnotation": {
+      "title": "SourceAnnotation",
+      "layer": "canonical",
+      "stereotype": "canonical",
+      "summary_pl": "Kanoniczna adnotacja na pikselach sceny; opcjonalna geometria przestrzenna; pelne pochodzenie i autor.",
+      "attrs": [
+        "annotation_id",
+        "geometry_scene_px: AABB | OBB",
+        "spatial_geometry: WGS84 (optional)",
+        "working_grid_uid",
+        "class_label · provenance · author"
+      ],
+      "docs": [
+        "Annotating"
+      ],
+      "source": [
+        "annotation"
+      ],
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    "TileAnnotation": {
+      "title": "TileAnnotation",
+      "layer": "derived",
+      "stereotype": "derived",
+      "summary_pl": "Adnotacja rzutowana na konkretny kafel - produkt pochodny SourceAnnotation.",
+      "attrs": [
+        "from SourceAnnotation → tile",
+        "geometry_tile_px",
+        "class_label"
+      ],
+      "docs": [
+        "Build a dataset"
+      ],
+      "source": [
+        "gsd_tiler"
+      ],
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    "WorkingView": {
+      "title": "WorkingView",
+      "layer": "derived",
+      "stereotype": "derived",
+      "summary_pl": "Regenerowalny widok roboczy sceny (VRT / wybor pasm / pansharpen) oraz zasoby wyswietlania z niego wyprowadzone - nie zrodlo prawdy.",
+      "attrs": [
+        "working_grid_uid",
+        "kind: VRT | band selection | pansharpen",
+        "display asset: project overview · full-res COG",
+        "regenerable derived view"
+      ],
+      "attrs_explorer": [
+        "derived_scenes: full-res COG · display overview · materialized view · virtual view · manifests · incomplete build files",
+        "display contract: source_max_zoom vs available_native_zoom",
+        "radiometry & processing provenance (processing_manifest.json)"
+      ],
+      "docs": [
+        "Derived products"
+      ],
+      "source": [
+        "scene_bands"
+      ],
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    "TileDefinition": {
+      "title": "TileDefinition",
+      "layer": "derived",
+      "stereotype": "derived",
+      "substereotype": "metadata-only",
+      "summary_pl": "Definicja kafla - okno, footprint, status przegladu. Katalog trzyma wylacznie metadane.",
+      "attrs": [
+        "tile_id",
+        "window_px · footprint_wgs84 (affine|TPS)",
+        "review_status"
+      ],
+      "docs": [
+        "Tile catalog"
+      ],
+      "source": [
+        "tile_catalog"
+      ],
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    "DatasetSample": {
+      "title": "DatasetSample",
+      "layer": "derived",
+      "stereotype": "derived",
+      "substereotype": "materialized",
+      "summary_pl": "Zmaterializowana probka: obraz 8-bit RGB + etykiety, z przypisaniem do splitu.",
+      "attrs": [
+        "image: 8-bit RGB",
+        "labels: YOLO / OBB",
+        "split: train | val | test"
+      ],
+      "docs": [
+        "Build a dataset"
+      ],
+      "source": [
+        "dataset build"
+      ],
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    "DatasetRun": {
+      "title": "DatasetRun",
+      "layer": "derived",
+      "stereotype": "derived",
+      "substereotype": "immutable",
+      "summary_pl": "Niezmienny, wersjonowany przebieg zbioru ze snapshotem konfiguracji, ziarnem i audytem.",
+      "attrs": [
+        "run_id (immutable)",
+        "config: size/overlap/split/seed/target_gsd",
+        "filters snapshot · used_tiles",
+        "leakage audit · metadata sidecar"
+      ],
+      "attrs_explorer": [
+        "allow_mixed_radiometry (jawna zgoda, zapisana w manifescie runu)"
+      ],
+      "docs": [
+        "Build a dataset"
+      ],
+      "source": [
+        "routers/dataset",
+        "dataset_audit"
+      ],
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    "Export": {
+      "title": "Export",
+      "layer": "export",
+      "stereotype": "export",
+      "summary_pl": "Artefakt eksportu - formaty uczace i geoprzestrzenne z zachowana georeferencja, plus manifesty i audyt.",
+      "attrs": [
+        "ml: YOLO / COCO / VOC",
+        "spatial: GeoJSON / GeoPackage / GeoParquet",
+        "flags: transform_model · approximate · orthorectified=false"
+      ],
+      "docs": [
+        "Export"
+      ],
+      "source": [
+        "export_sidecars"
+      ],
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    "Delivery": {
+      "title": "Delivery",
+      "layer": "source",
+      "summary_pl": "Paczka dostawcy jako calosc - katalog albo archiwum. Zrodlo pozostaje tylko do odczytu.",
+      "attrs": [
+        "delivery_uid",
+        "shape: single file | multipart mosaic | archive",
+        "declared_provider vs detected_provider"
+      ],
+      "docs": [
+        "Input data"
+      ],
+      "source": [
+        "services/scene_sources"
+      ],
+      "appears_in": [
+        "explorer"
+      ],
+      "_note": "Graf dostawy swiadomie POZA rysunkami artykulu - strona importu rozmywalaby filar prowenancji adnotacji (decyzja 1 z etapu 1).",
+      "stereotype": "source"
+    },
+    "Acquisition": {
+      "title": "Acquisition",
+      "layer": "source",
+      "summary_pl": "Pojedyncza akwizycja w dostawie: czas, sensor, geometria obserwacji.",
+      "attrs": [
+        "acquisition_id",
+        "acquisition_datetime_utc",
+        "sensor · modality · incidence angle"
+      ],
+      "docs": [
+        "Input data"
+      ],
+      "appears_in": [
+        "explorer"
+      ],
+      "stereotype": "source"
+    },
+    "Product": {
+      "title": "Product",
+      "layer": "source",
+      "summary_pl": "Produkt dostawcy w ramach akwizycji (np. PAN, MUL, PMS). Przy wielu produktach wybor nalezy do uzytkownika.",
+      "attrs": [
+        "product_type",
+        "raster_kind: direct | virtual_mosaic | derived",
+        "status: ready | decision_required | prepare_required | invalid"
+      ],
+      "docs": [
+        "Input data"
+      ],
+      "appears_in": [
+        "explorer"
+      ],
+      "stereotype": "source"
+    },
+    "Asset": {
+      "title": "Asset",
+      "layer": "source",
+      "summary_pl": "Pojedynczy plik dostawy z jawna rola. Rozdzielenie rol jest tym, co pozwala nie mylic zrodla z widokiem roboczym ani z produktem analitycznym.",
+      "attrs": [
+        "asset_id · format · size",
+        "role: source_measurement | labeling_view | analytic_view | display_overview",
+        "identity_strength · content_signature"
+      ],
+      "docs": [
+        "Input data"
+      ],
+      "appears_in": [
+        "explorer"
+      ],
+      "stereotype": "source"
+    }
+  },
+  "entity_relations": [
+    {
+      "from": "Scene",
+      "to": "WorkingView",
+      "label": "derives 1..*",
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    {
+      "from": "Scene",
+      "to": "SourceAnnotation",
+      "label": "owns 0..*",
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    {
+      "from": "SourceAnnotation",
+      "to": "TileAnnotation",
+      "label": "projected to 0..*",
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    {
+      "from": "WorkingView",
+      "to": "TileDefinition",
+      "label": "tiles into 0..*",
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    {
+      "from": "TileDefinition",
+      "to": "TileAnnotation",
+      "label": "locates",
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    {
+      "from": "TileDefinition",
+      "to": "DatasetSample",
+      "label": "materialized (image)",
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    {
+      "from": "TileAnnotation",
+      "to": "DatasetSample",
+      "label": "labels",
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    {
+      "from": "DatasetSample",
+      "to": "DatasetRun",
+      "label": "included in 1..*",
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    {
+      "from": "DatasetRun",
+      "to": "Export",
+      "label": "produces 1..*",
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    {
+      "from": "Delivery",
+      "to": "Acquisition",
+      "label": "contains 1..*",
+      "appears_in": [
+        "explorer"
+      ]
+    },
+    {
+      "from": "Acquisition",
+      "to": "Product",
+      "label": "yields 1..*",
+      "appears_in": [
+        "explorer"
+      ]
+    },
+    {
+      "from": "Product",
+      "to": "Asset",
+      "label": "consists of 1..*",
+      "appears_in": [
+        "explorer"
+      ]
+    },
+    {
+      "from": "Product",
+      "to": "Scene",
+      "label": "catalogued as 0..1",
+      "appears_in": [
+        "explorer"
+      ]
+    }
+  ],
+  "entity_boundaries": [
+    {
+      "ids": [
+        "Scene",
+        "SourceAnnotation",
+        "TileAnnotation"
+      ],
+      "label": "Canonical / annotation layer",
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    {
+      "ids": [
+        "WorkingView",
+        "TileDefinition",
+        "DatasetSample",
+        "DatasetRun",
+        "Export"
+      ],
+      "label": "Derived dataset layer",
+      "appears_in": [
+        "rys1",
+        "explorer"
+      ]
+    },
+    {
+      "ids": [
+        "Delivery",
+        "Acquisition",
+        "Product",
+        "Asset"
+      ],
+      "label": "Provider delivery graph",
+      "appears_in": [
+        "explorer"
+      ]
+    }
+  ],
+  "components": {
+    "input": {
+      "title": "Input - local data",
+      "boundary": "external",
+      "summary_pl": "Lokalne dane wejsciowe: paczki EO/SAR, NITF.",
+      "parts": [
+        "GeoTIFF · COG · EO/SAR packages · NITF"
+      ],
+      "docs": [
+        "Input data"
+      ],
+      "source": [
+        "services/scene_sources"
+      ],
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    "tauri": {
+      "title": "Tauri",
+      "tag": "RUST SHELL",
+      "boundary": "desktop",
+      "summary_pl": "Powloka desktop: osadza React w WebView, uruchamia i kontroluje sidecar FastAPI, natywne dialogi i cykl zycia.",
+      "parts": [
+        "embeds React in a WebView",
+        "launches/controls FastAPI sidecar",
+        "native dialogs · app lifecycle"
+      ],
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    "react": {
+      "title": "React / TypeScript UI",
+      "tag": "WEB UI",
+      "boundary": "desktop",
+      "summary_pl": "Interfejs: kanwa sceny, modul datasetu, panel wyswietlania.",
+      "parts": [
+        "SceneCanvas · SceneMapCanvas",
+        "LabelView · Dataset module · BandSelector",
+        "display panel (histogram / percentiles)"
+      ],
+      "docs": [
+        "Annotating"
+      ],
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    "routers": {
+      "title": "Routers (FastAPI)",
+      "tag": "HTTP API",
+      "boundary": "backend",
+      "summary_pl": "Warstwa HTTP API; deleguje do resolverow, uslug i menedzera zadan.",
+      "parts": [
+        "projects · projects/nitf · scenes",
+        "dataset · scan · scene_import · jobs"
+      ],
+      "source": [
+        "routers/dataset"
+      ],
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    "scene_res": {
+      "title": "Scene package resolvers",
+      "tag": "COMPONENT",
+      "boundary": "backend",
+      "summary_pl": "Rozpoznanie dostawy, wybor produktu i zasobow, ekstrakcja metadanych, tozsamosc.",
+      "parts": [
+        "provider resolvers (ICEYE · Capella · Pléiades · WorldView)",
+        "identity · archives · mosaics · radiometry"
+      ],
+      "docs": [
+        "Derived products"
+      ],
+      "source": [
+        "scene_packages/resolvers",
+        "scene_packages/providers",
+        "scene_packages/identity"
+      ],
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    "raster_res": {
+      "title": "SceneRasterResolver",
+      "tag": "COMPONENT",
+      "boundary": "backend",
+      "summary_pl": "Odczyt okna sceny, widok roboczy, VRT/pansharpen, wybor aktywnego zasobu wyswietlania.",
+      "parts": [
+        "read_scene_window · working raster",
+        "VRT · pansharpen"
+      ],
+      "docs": [
+        "Derived products"
+      ],
+      "source": [
+        "SceneRasterResolver"
+      ],
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    "geo": {
+      "title": "SceneGeoModel",
+      "tag": "COMPONENT",
+      "boundary": "backend",
+      "summary_pl": "Model geometrii sceny (affine | gcp_tps), footprinty przez TPS.",
+      "parts": [
+        "affine | gcp_tps · sensor_geometry",
+        "footprints (TPS densification)"
+      ],
+      "docs": [
+        "From scene to dataset"
+      ],
+      "source": [
+        "SceneGeoModel"
+      ],
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    "jobs": {
+      "title": "Background job manager",
+      "tag": "COMPONENT",
+      "boundary": "backend",
+      "summary_pl": "Trwale zadania w tle: import, budowa piramid, derywat pelnej rozdzielczosci, eksporty i kopie zapasowe. Anulowanie i wznawianie, izolowane procesy robocze.",
+      "parts": [
+        "scheduler · store · processes",
+        "durable jobs · cancel / resume",
+        "isolated worker processes"
+      ],
+      "docs": [
+        "Background jobs"
+      ],
+      "source": [
+        "jobs"
+      ],
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ],
+      "_note": "NOWY wezel (decyzja 2 z etapu 1). Dotad nieobecny na zadnym rysunku, mimo ze tekst artykulu o zadaniach w tle mowi."
+    },
+    "dsvc": {
+      "title": "Dataset & export services",
+      "tag": "COMPONENT",
+      "boundary": "backend",
+      "summary_pl": "Kaflowanie, audyt przecieku, eksport, atrybuty, ingest NITF, statystyki datasetu.",
+      "parts": [
+        "gsd_tiler · dataset_audit",
+        "export_sidecars · attribute_engine",
+        "nitf: ingest · metadata"
+      ],
+      "docs": [
+        "Build a dataset"
+      ],
+      "source": [
+        "services/gsd_tiler",
+        "dataset_audit",
+        "export_sidecars"
+      ],
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    "source_pkgs": {
+      "title": "Source imagery packages",
+      "tag": "READ-ONLY",
+      "boundary": "infrastructure",
+      "summary_pl": "Zrodla read-only: paczki EO/SAR, NITF.",
+      "parts": [
+        "GeoTIFF · COG · EO/SAR · NITF",
+        "unmodified sources"
+      ],
+      "docs": [
+        "Input data"
+      ],
+      "source": [
+        "services/scene_sources"
+      ],
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    "raster": {
+      "title": "Raster processing",
+      "tag": "GDAL",
+      "boundary": "infrastructure",
+      "summary_pl": "GDAL/rasterio i PROJ - odczyt/zapis rastrow i uklady odniesienia.",
+      "parts": [
+        "GDAL / rasterio · PROJ"
+      ],
+      "source": [
+        "SceneRasterResolver"
+      ],
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    "storage": {
+      "title": "Project storage",
+      "tag": "READ / WRITE",
+      "boundary": "infrastructure",
+      "summary_pl": "Read/write: manifesty scen, adnotacje zrodlowe, metadata-only tile catalogs, dataset runs, derived_scenes.",
+      "parts": [
+        "scene manifests · source annotations",
+        "metadata-only tile catalogs",
+        "dataset runs · derived_scenes (overviews · full-res COG)"
+      ],
+      "docs": [
+        "Tile catalog"
+      ],
+      "source": [
+        "scene_manifest",
+        "tile_catalog"
+      ],
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    "ai": {
+      "title": "AI runtime",
+      "tag": "LOCAL · OFFLINE",
+      "boundary": "infrastructure",
+      "summary_pl": "Lokalny, offline: SAM, DINO, YOLO; user-configured model repository.",
+      "parts": [
+        "SAM · DINO · YOLO (training/prediction)",
+        "user-configured model repository"
+      ],
+      "docs": [
+        "Training"
+      ],
+      "source": [
+        "training"
+      ],
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    "output": {
+      "title": "Output — artifacts",
+      "boundary": "external",
+      "summary_pl": "Artefakty wyjsciowe: YOLO/COCO/VOC, GeoParquet, manifesty i audyt.",
+      "parts": [
+        "YOLO / COCO / VOC",
+        "GeoParquet · manifests + audit"
+      ],
+      "docs": [
+        "Export"
+      ],
+      "source": [
+        "export_sidecars"
+      ],
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    }
+  },
+  "component_relations": [
+    {
+      "from": "input",
+      "to": "scene_res",
+      "label": "import / scan",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "from": "tauri",
+      "to": "react",
+      "label": "embeds (WebView)",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "from": "tauri",
+      "to": "routers",
+      "label": "launches sidecar",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "from": "react",
+      "to": "routers",
+      "label": "HTTP/JSON + SSE · localhost · session token",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "from": "routers",
+      "to": "scene_res",
+      "label": "delegates",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "from": "routers",
+      "to": "raster_res",
+      "label": "delegates",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "from": "routers",
+      "to": "dsvc",
+      "label": "delegates",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "from": "routers",
+      "to": "jobs",
+      "label": "delegates",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "from": "scene_res",
+      "to": "source_pkgs",
+      "label": "read-only",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "from": "raster_res",
+      "to": "raster",
+      "label": "GDAL / rasterio",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "from": "geo",
+      "to": "storage",
+      "label": "footprints",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "from": "jobs",
+      "to": "storage",
+      "label": "job state",
+      "appears_in": [
+        "explorer"
+      ],
+      "_note": "Nie rysowana na Rys. 2: jedyny wolny korytarz pionowy ma 30 px, a trasa przecinala wezel Dataset & export services. Explorer ma miejsce i auto-routing, wiec tam relacja jest widoczna."
+    },
+    {
+      "from": "jobs",
+      "to": "raster",
+      "label": "overviews / COG build",
+      "appears_in": [
+        "explorer"
+      ],
+      "_note": "Nie rysowana na Rys. 2: jedyny wolny korytarz pionowy ma 30 px, a trasa przecinala wezel Dataset & export services. Explorer ma miejsce i auto-routing, wiec tam relacja jest widoczna."
+    },
+    {
+      "from": "dsvc",
+      "to": "storage",
+      "label": "dataset runs",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "from": "dsvc",
+      "to": "ai",
+      "label": "inference / training",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "from": "dsvc",
+      "to": "output",
+      "label": "export",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    }
+  ],
+  "component_boundaries": [
+    {
+      "ids": [
+        "tauri",
+        "react"
+      ],
+      "label": "Desktop application · offline",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "ids": [
+        "routers",
+        "scene_res",
+        "raster_res",
+        "geo",
+        "jobs",
+        "dsvc"
+      ],
+      "label": "Backend · FastAPI · bundled runtime",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    },
+    {
+      "ids": [
+        "source_pkgs",
+        "raster",
+        "storage",
+        "ai"
+      ],
+      "label": "Infrastructure · local runtime",
+      "appears_in": [
+        "rys2",
+        "explorer"
+      ]
+    }
+  ],
+  "stages": {
+    "sources": {
+      "title": "Data sources",
+      "kind": "input",
+      "summary_pl": "Lokalne paczki dostawcow i podklady - wejscie potoku. Nic nie opuszcza stanowiska.",
+      "items": [
+        [
+          "SAR packages",
+          "ICEYE · Capella · Umbra"
+        ],
+        [
+          "EO packages",
+          "Pléiades 1 / Neo · WorldView · BlackSky"
+        ],
+        [
+          "Airborne / UAV imagery",
+          "GeoTIFF · NITF"
+        ]
+      ],
+      "docs": [
+        "Input data"
+      ],
+      "source": [
+        "services/scene_sources"
+      ],
+      "appears_in": [
+        "rys3",
+        "explorer"
+      ]
+    },
+    "import": {
+      "title": "Import & raster access",
+      "kind": "stage",
+      "summary_pl": "Trwaly, progresywny import produktu, widoku roboczego, georeferencji, piramid i derywatu pelnej rozdzielczosci.",
+      "items": [
+        [
+          "provider-specific package resolvers",
+          ""
+        ],
+        [
+          "asset selection",
+          ""
+        ],
+        [
+          "persistent import jobs",
+          ""
+        ],
+        [
+          "metadata & source identity",
+          ""
+        ],
+        [
+          "SceneRasterResolver",
+          ""
+        ],
+        [
+          "VRT / mosaic / pansharpening",
+          ""
+        ],
+        [
+          "project overviews / external .ovr",
+          ""
+        ],
+        [
+          "published full-resolution COG",
+          ""
+        ],
+        [
+          "affine & GCP/TPS georeferencing",
+          ""
+        ]
+      ],
+      "items_explorer": [
+        [
+          "display asset contract",
+          "source_max_zoom vs available_native_zoom"
+        ],
+        [
+          "archives · relink · import report",
+          ""
+        ],
+        [
+          "manifest migration v1→v2",
+          ""
+        ],
+        [
+          "radiometry & processing provenance",
+          ""
+        ]
+      ],
+      "engine": [
+        "GDAL",
+        "rasterio",
+        "PROJ"
+      ],
+      "docs": [
+        "Derived products",
+        "QGIS overviews",
+        "Background jobs"
+      ],
+      "source": [
+        "services/scene_bands",
+        "scene_overviews",
+        "SceneRasterResolver",
+        "jobs"
+      ],
+      "appears_in": [
+        "rys3",
+        "explorer"
+      ]
+    },
+    "canonical": {
+      "title": "Canonical Geospatial Dataset",
+      "kind": "hub",
+      "summary_pl": "Serce systemu: bogaty w pochodzenie kanoniczny zbior, z ktorego wyliczane sa produkty pochodne. Sceny sa referencjonowane, nie kopiowane.",
+      "items": [
+        [
+          "source scene references",
+          ""
+        ],
+        [
+          "working views",
+          ""
+        ],
+        [
+          "source annotations",
+          ""
+        ],
+        [
+          "scene manifests",
+          ""
+        ],
+        [
+          "acquisition metadata",
+          ""
+        ],
+        [
+          "spatial geometry & provenance",
+          ""
+        ]
+      ],
+      "docs": [
+        "From scene to dataset"
+      ],
+      "source": [
+        "SceneGeoModel",
+        "scene_manifest"
+      ],
+      "appears_in": [
+        "rys3",
+        "explorer"
+      ]
+    },
+    "annotation": {
+      "title": "Annotation & QA",
+      "kind": "stage",
+      "summary_pl": "Oznaczanie na pelnej scenie ze wsparciem AI i kontrola jakosci zespolu.",
+      "items": [
+        [
+          "AABB / OBB manual annotation",
+          ""
+        ],
+        [
+          "SAM · YOLO · template/DINO assist",
+          ""
+        ],
+        [
+          "review grid",
+          ""
+        ],
+        [
+          "team annotation packages",
+          ""
+        ],
+        [
+          "manager review",
+          ""
+        ],
+        [
+          "annotation provenance",
+          ""
+        ]
+      ],
+      "engine": [
+        "SAM",
+        "DINO"
+      ],
+      "docs": [
+        "Annotating"
+      ],
+      "source": [
+        "annotation"
+      ],
+      "appears_in": [
+        "rys3",
+        "explorer"
+      ]
+    },
+    "generation": {
+      "title": "Dataset generation",
+      "kind": "stage",
+      "summary_pl": "Trwala budowa wersjonowanego zbioru z przestrzennie uczciwym podzialem, audytem i odbudowywalnymi indeksami.",
+      "items": [
+        [
+          "metadata-only tile catalog",
+          ""
+        ],
+        [
+          "versioned JSON indexes",
+          ""
+        ],
+        [
+          "preprocessing profiles",
+          ""
+        ],
+        [
+          "filtering",
+          ""
+        ],
+        [
+          "spatial split",
+          ""
+        ],
+        [
+          "negative samples",
+          ""
+        ],
+        [
+          "immutable dataset runs",
+          ""
+        ],
+        [
+          "leakage audit & statistics",
+          ""
+        ]
+      ],
+      "items_explorer": [
+        [
+          "dataset statistics",
+          "imbalance · geometry · co-occurrence · acquisition"
+        ],
+        [
+          "ANN analysis",
+          ""
+        ]
+      ],
+      "docs": [
+        "Build a dataset",
+        "Background jobs"
+      ],
+      "source": [
+        "services/gsd_tiler",
+        "json_index",
+        "dataset_audit",
+        "embedding_index"
+      ],
+      "appears_in": [
+        "rys3",
+        "explorer"
+      ]
+    },
+    "training": {
+      "title": "Training & analysis",
+      "kind": "stage",
+      "summary_pl": "Trening i inferencja w zamknietej petli aplikacji, z analiza podobienstwa klas i telemetria zasobow.",
+      "items": [
+        [
+          "YOLO AABB/OBB training",
+          ""
+        ],
+        [
+          "prediction",
+          ""
+        ],
+        [
+          "class similarity analysis",
+          ""
+        ],
+        [
+          "metrics & confusion matrix",
+          ""
+        ],
+        [
+          "model registry",
+          ""
+        ]
+      ],
+      "items_explorer": [
+        [
+          "adaptive batch/workers/cache preflight",
+          ""
+        ],
+        [
+          "shared staging cache",
+          ""
+        ],
+        [
+          "batched scene prediction",
+          ""
+        ],
+        [
+          "performance telemetry",
+          ""
+        ]
+      ],
+      "engine": [
+        "PyTorch",
+        "Ultralytics"
+      ],
+      "docs": [
+        "Training",
+        "Background jobs"
+      ],
+      "source": [
+        "training",
+        "training_resources",
+        "training_dataset"
+      ],
+      "appears_in": [
+        "rys3",
+        "explorer"
+      ],
+      "_note": "Cztery pozycje wydajnosciowe swiadomie tylko w explorerze (decyzja 3 z etapu 1) - nie sa filarami wkladu, a kolumna staje sie sciana pozycji."
+    },
+    "exports": {
+      "title": "Exports",
+      "kind": "output",
+      "summary_pl": "Trwale, cache'owane artefakty z formatami uczacymi, georeferencja, manifestami i audytem.",
+      "items": [
+        [
+          "YOLO · COCO · Pascal VOC",
+          ""
+        ],
+        [
+          "GeoParquet (native / WGS84) · GeoJSON · GeoPackage",
+          ""
+        ],
+        [
+          "acquisition metadata sidecars",
+          ""
+        ],
+        [
+          "manifests · checksums · audit report",
+          ""
+        ],
+        [
+          "reusable ZIP dataset package",
+          ""
+        ]
+      ],
+      "items_explorer": [
+        [
+          "atomic ZIP artifacts & cache",
+          ""
+        ]
+      ],
+      "engine": [
+        "GeoParquet (pyarrow)",
+        "GDAL"
+      ],
+      "docs": [
+        "Export",
+        "Background jobs"
+      ],
+      "source": [
+        "artifact_exports",
+        "export_sidecars"
+      ],
+      "appears_in": [
+        "rys3",
+        "explorer"
+      ]
+    }
+  },
+  "stage_order": [
+    "sources",
+    "import",
+    "canonical",
+    "annotation",
+    "generation",
+    "training",
+    "exports"
+  ],
+  "tech_strip": [
+    "Tauri desktop",
+    "React / TypeScript",
+    "FastAPI",
+    "GDAL / rasterio / PROJ",
+    "PyTorch / Ultralytics",
+    "Local storage"
+  ],
+  "docs_map": {
+    "Input data": "input-data/index.html",
+    "Derived products": "input-data/produkty-pochodne.html",
+    "QGIS overviews": "input-data/piramidy-qgis.html",
+    "Background jobs": "reference/zadania-w-tle.html",
+    "From scene to dataset": "getting-started/od-sceny-do-datasetu.html",
+    "Annotating": "annotation/index.html",
+    "Build a dataset": "datasets/zbuduj-dataset.html",
+    "Training": "training/index.html",
+    "Export": "export/index.html",
+    "Tile catalog": "datasets/katalog-kafelkow.html"
+  },
+  "source_map": {
+    "services/scene_sources": "backend/services/scene_sources.py",
+    "scene_packages/resolvers": "backend/services/scene_packages/resolvers.py",
+    "scene_packages/providers": "backend/services/scene_packages/providers/__init__.py",
+    "scene_packages/identity": "backend/services/scene_packages/identity.py",
+    "services/scene_bands": "backend/services/scene_bands.py",
+    "scene_bands": "backend/services/scene_bands.py",
+    "scene_overviews": "backend/services/scene_overviews.py",
+    "SceneRasterResolver": "backend/services/scene_raster_resolver.py",
+    "SceneGeoModel": "backend/services/sensor_geometry.py",
+    "scene_manifest": "backend/services/scene_manifest.py",
+    "annotation": "backend/routers/annotations.py",
+    "jobs": "backend/services/jobs/scheduler.py",
+    "json_index": "backend/services/json_index/queries.py",
+    "services/gsd_tiler": "backend/services/gsd_tiler.py",
+    "gsd_tiler": "backend/services/gsd_tiler.py",
+    "dataset_audit": "backend/services/dataset_audit.py",
+    "embedding_index": "backend/services/embedding_index.py",
+    "training": "backend/routers/training.py",
+    "training_resources": "backend/services/training_resources.py",
+    "training_dataset": "backend/services/training_dataset.py",
+    "artifact_exports": "backend/services/artifact_exports.py",
+    "export_sidecars": "backend/services/export_sidecars.py",
+    "tile_catalog": "backend/services/tile_catalog.py",
+    "dataset build": "backend/services/dataset_builder.py",
+    "routers/dataset": "backend/routers/dataset.py"
+  }
+}

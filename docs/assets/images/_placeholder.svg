@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img"
+     aria-label="Materiał wizualny w przygotowaniu">
+  <title>Materiał wizualny w przygotowaniu</title>
+  <rect width="800" height="450" fill="#f4f1fb" stroke="#9b6cff" stroke-width="3"
+        stroke-dasharray="14 10" rx="10"/>
+  <g fill="#6b46c1" font-family="Segoe UI, Arial, sans-serif" text-anchor="middle">
+    <text x="400" y="212" font-size="34" font-weight="600">Materiał w przygotowaniu</text>
+    <text x="400" y="256" font-size="20" fill="#7c5cc4">
+      Opis planowanego zrzutu znajduje się w tekście alternatywnym
+    </text>
+  </g>
+</svg>

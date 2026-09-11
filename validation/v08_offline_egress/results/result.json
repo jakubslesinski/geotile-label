@@ -1,0 +1,39 @@
+{
+  "id": "v08",
+  "claim": "C5",
+  "title": "Offline / brak egresu (projekt lokalny)",
+  "status": "pass",
+  "substrate": [
+    "FAIR1M"
+  ],
+  "tier": "public",
+  "metrics": {
+    "outbound_attempts_total": 0,
+    "hosts": [],
+    "ran_with_network_blocked": true,
+    "stages_run": [
+      "export",
+      "geo_model",
+      "ingest",
+      "propagate",
+      "render"
+    ],
+    "block_error": ""
+  },
+  "artifacts": [
+    "results/egress_log.csv"
+  ],
+  "config": {
+    "n_scenes": 5,
+    "tile_size": 640
+  },
+  "notes": "Lokalny pipeline FAIR1M (export, geo_model, ingest, propagate, render) na 5 scenach: prób egresu = 0 ; pełny run przy zablokowanym egresie = True. Claim obejmuje ścieżkę danych; opcjonalna warstwa referencyjna podkładu w interfejsie jest poza nim i nie wchodzi do żadnego artefaktu.",
+  "timestamp": "2026-09-09T11:07:32.840459+00:00",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "app_rev": "6cf3028",
+    "app_fingerprint": "7ca623b59cdc3ee8:258",
+    "app_version": "1.4.0"
+  }
+}

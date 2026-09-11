@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GeoTile Label — architecture explorer</title>
+<style>
+  :root{
+    --bg:#F5F5F6;--main:#F0F0F2;--surface:#FFFFFF;--raised:#FFFFFF;--hover:#FAFAFB;--text:#202024;--muted:#6F6F76;
+    --border:rgba(20,20,24,.10);--border-strong:rgba(20,20,24,.20);--accent:#7C4FE0;--accent-hover:#6D3FD1;
+    --accent-soft:rgba(124,79,224,.10);--on-accent:#FFFFFF;--shadow:0 12px 32px rgba(20,20,24,.06);
+    --shadow-sm:0 2px 8px rgba(20,20,24,.05);--edge:#B7B7BE;--chev:#C3C3C6;--strip:#202024;--strip-text:#EDEDF0;
+    --ui:#2D82C4;--be:#5A6FD0;--infra:#2A9D8F;--font:'Inter','Segoe UI',system-ui,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --bg:#111113;--main:#1C1C1E;--surface:#202023;--raised:#242428;--hover:#29292E;--text:#F5F5F6;--muted:#9A9A9D;
+    --border:rgba(255,255,255,.08);--border-strong:rgba(255,255,255,.16);--accent:#9B6CFF;--accent-hover:#AD86FF;
+    --accent-soft:rgba(155,108,255,.15);--on-accent:#15121F;--shadow:0 14px 36px rgba(0,0,0,.32);
+    --shadow-sm:0 2px 10px rgba(0,0,0,.3);--edge:#4A4A50;--chev:#4A4A50;--strip:#0B0B0D;--strip-text:#EDEDF0;
+    --ui:#5AA9E6;--be:#8F9BEC;--infra:#4FC0B0;
+  }}
+  :root[data-theme="light"]{--bg:#F5F5F6;--main:#F0F0F2;--surface:#FFFFFF;--raised:#FFFFFF;--hover:#FAFAFB;--text:#202024;
+    --muted:#6F6F76;--border:rgba(20,20,24,.10);--border-strong:rgba(20,20,24,.20);--accent:#7C4FE0;--accent-hover:#6D3FD1;
+    --accent-soft:rgba(124,79,224,.10);--on-accent:#FFFFFF;--shadow:0 12px 32px rgba(20,20,24,.06);
+    --shadow-sm:0 2px 8px rgba(20,20,24,.05);--edge:#B7B7BE;--chev:#C3C3C6;--strip:#202024;--strip-text:#EDEDF0;
+    --ui:#2D82C4;--be:#5A6FD0;--infra:#2A9D8F;}
+  :root[data-theme="dark"]{--bg:#111113;--main:#1C1C1E;--surface:#202023;--raised:#242428;--hover:#29292E;--text:#F5F5F6;
+    --muted:#9A9A9D;--border:rgba(255,255,255,.08);--border-strong:rgba(255,255,255,.16);--accent:#9B6CFF;
+    --accent-hover:#AD86FF;--accent-soft:rgba(155,108,255,.15);--on-accent:#15121F;--shadow:0 14px 36px rgba(0,0,0,.32);
+    --shadow-sm:0 2px 10px rgba(0,0,0,.3);--edge:#4A4A50;--chev:#4A4A50;--strip:#0B0B0D;--strip-text:#EDEDF0;
+    --ui:#5AA9E6;--be:#8F9BEC;--infra:#4FC0B0;}
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);letter-spacing:-.2px;-webkit-font-smoothing:antialiased;line-height:1.5}
+  .topbar{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;padding:.9rem 1.4rem;border-bottom:1px solid var(--border);
+    position:sticky;top:0;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(8px);z-index:15}
+  .brand{display:flex;flex-direction:column;gap:.1rem;margin-right:auto}
+  .brand h1{margin:0;font-size:1rem;font-weight:650;letter-spacing:-.3px}.brand h1 .dot{color:var(--accent);font-weight:700}
+  .brand p{margin:0;font-size:.78rem;color:var(--muted)}
+  .tabs{display:inline-flex;background:var(--main);border:1px solid var(--border);border-radius:11px;padding:3px}
+  .tab{border:0;background:transparent;font:inherit;font-size:.82rem;font-weight:600;color:var(--muted);padding:.4rem .8rem;border-radius:8px;cursor:pointer}
+  .tab[aria-selected="true"]{background:var(--surface);color:var(--text);box-shadow:var(--shadow-sm)}
+  .tab:focus-visible{outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+  .search{position:relative}
+  .search input{width:230px;max-width:44vw;font:inherit;font-size:.85rem;padding:.5rem .7rem .5rem 2rem;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text)}
+  .search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .search .si{position:absolute;left:.6rem;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+  .results{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--raised);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:.35rem;display:none;max-height:340px;overflow:auto;z-index:30}
+  .results.open{display:block}
+  .res{display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;font:inherit;background:transparent;border:0;border-radius:8px;padding:.5rem .6rem;cursor:pointer;color:inherit}
+  .res:hover,.res.act{background:var(--accent-soft)}
+  .res .rdot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:0 0 auto}
+  .res .rdot.c-p{background:var(--accent)}.res .rdot.c-a{background:var(--be)}.res .rdot.c-m{background:var(--infra)}
+  .res .rl{font-size:.85rem;font-weight:600}.res .rk{margin-left:auto;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .toggle{display:inline-flex;align-items:center;gap:.4rem;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:.82rem;font-weight:600;padding:.45rem .65rem;border-radius:10px;cursor:pointer}
+  .toggle:hover{border-color:var(--border-strong)}.toggle:focus-visible{outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+  .view{display:none}.view.active{display:block}
+
+  .stage{padding:1.5rem;overflow-x:auto}
+  .pipeline{display:flex;align-items:stretch;gap:.4rem;min-width:min-content;padding-bottom:.4rem}
+  .pipeline.focus .phase:not([aria-pressed="true"]){opacity:.48}
+  .phase{display:flex;flex-direction:column;gap:.5rem;width:206px;flex:0 0 auto;text-align:left;background:transparent;border:0;padding:.4rem;border-radius:16px;cursor:pointer;font:inherit;color:inherit;transition:opacity .2s}
+  .phase:focus-visible{outline:none;box-shadow:0 0 0 3px var(--accent-soft)}.phase:hover .p-head{color:var(--accent)}
+  .phase[aria-pressed="true"] .items{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),var(--shadow)}
+  .p-head{display:flex;align-items:center;gap:.5rem;font-size:.71rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);transition:color .15s;min-height:2.2em}
+  .p-step{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex:0 0 auto;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-size:.66rem;font-weight:700}
+  .items{display:flex;flex-direction:column;gap:.32rem;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:.5rem;box-shadow:var(--shadow-sm);flex:1;transition:box-shadow .15s,border-color .15s}
+  .phase:hover .items{border-color:var(--border-strong)}
+  .item{font-size:.77rem;color:var(--text);background:var(--main);border-radius:9px;padding:.38rem .5rem}
+  .p-engine{margin-top:.05rem;font-size:.68rem;color:var(--muted);background:var(--main);border:1px solid var(--border);border-radius:9px;padding:.32rem .5rem;display:flex;align-items:center;gap:.35rem;line-height:1.3}
+  .p-engine .ei{color:var(--accent);flex:0 0 auto}
+  .phase.hub{width:300px;justify-content:center}
+  .hex{width:288px;aspect-ratio:.866;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;padding:.8rem 1rem;text-align:center;color:var(--on-accent);background:linear-gradient(160deg,var(--accent),var(--accent-hover));clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);box-shadow:0 18px 44px color-mix(in srgb,var(--accent) 38%,transparent)}
+  .phase.hub:hover .hex{filter:brightness(1.06)}
+  .phase.hub[aria-pressed="true"] .hex{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--accent),0 18px 44px color-mix(in srgb,var(--accent) 38%,transparent)}
+  .hex h3{margin:0;font-size:.9rem;font-weight:700;line-height:1.18;text-wrap:balance}.hex .hub-tag{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+  .hex ul{list-style:none;margin:.1rem 0 0;padding:0;display:flex;flex-direction:column;gap:.12rem}.hex li{font-size:.69rem;opacity:.92;line-height:1.28}
+  .chev{flex:0 0 auto;align-self:center;color:var(--chev);font-size:1.7rem;user-select:none;transform:translateY(.6rem)}
+  .strip{margin:0 1.5rem 1.6rem;background:var(--strip);border-radius:14px;padding:.85rem 1.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.5rem;box-shadow:var(--shadow)}
+  .strip .lbl{font-size:.64rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-right:.3rem}
+  .strip .seg{font-size:.8rem;font-weight:600;color:var(--strip-text)}.strip .sep{color:#54545c}
+
+  .mstage{padding:1.5rem;overflow:auto}
+  .diagram{position:relative;margin:0 auto}
+  .edges{position:absolute;inset:0;overflow:visible;pointer-events:none}
+  .edge{stroke:var(--edge);stroke-width:1.6;fill:none}.earrow{fill:var(--edge)}
+  .elabel{fill:var(--muted);font-size:11px;font-family:var(--font)}
+  .diagram.focus .edge:not(.hot),.diagram.focus .earrow:not(.hot),.diagram.focus .elabel:not(.hot){opacity:.14}
+  .edge.hot{stroke:var(--accent);stroke-width:2.1}.earrow.hot{fill:var(--accent)}.elabel.hot{fill:var(--accent);font-weight:600}
+  .bound{position:absolute;border:1.5px dashed var(--border-strong);border-radius:16px;pointer-events:none}
+  .bound .blabel{position:absolute;top:9px;left:13px;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .node{position:absolute;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.55rem .65rem;box-shadow:var(--shadow-sm);cursor:pointer;text-align:left;font:inherit;color:inherit;display:flex;flex-direction:column;gap:.26rem;transition:box-shadow .15s,border-color .15s,opacity .2s}
+  .node:hover{border-color:var(--border-strong)}.node:focus-visible{outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+  .node.canon{border-color:color-mix(in srgb,var(--accent) 42%,var(--border))}
+  .nhead{display:flex;align-items:center;gap:.5rem}.nname{font-weight:650;font-size:.87rem}
+  .nbadge{margin-left:auto;font-size:.56rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.16rem .4rem;border-radius:6px;background:var(--main);color:var(--muted);white-space:nowrap}
+  .node.canon .nbadge{background:var(--accent-soft);color:var(--accent)}
+  .nbadge.lay-ui{color:var(--ui);background:color-mix(in srgb,var(--ui) 15%,transparent)}
+  .nbadge.lay-be{color:var(--be);background:color-mix(in srgb,var(--be) 17%,transparent)}
+  .nbadge.lay-infra{color:var(--infra);background:color-mix(in srgb,var(--infra) 17%,transparent)}
+  .nattr{font-size:.71rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .nmore{font-size:.67rem;color:var(--accent);font-weight:600}
+  .diagram.focus .node:not(.sel):not(.nb){opacity:.34}
+  .node.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),var(--shadow)}
+  .legend{display:flex;flex-wrap:wrap;gap:.5rem 1.3rem;align-items:center;justify-content:center;padding:0 1.5rem 1.6rem;font-size:.78rem;color:var(--muted)}
+  .lg{display:inline-flex;align-items:center;gap:.45rem}
+  .sw{width:15px;height:15px;border-radius:5px;border:1px solid var(--border-strong);background:var(--surface)}
+  .sw.canon{border-color:color-mix(in srgb,var(--accent) 55%,var(--border));background:var(--accent-soft)}
+  .dotc{width:11px;height:11px;border-radius:50%}.dotc.ui{background:var(--ui)}.dotc.be{background:var(--be)}.dotc.infra{background:var(--infra)}.dotc.ext{background:var(--muted)}
+  .lgline{width:24px;height:0;border-top:1.6px solid var(--edge);position:relative}
+  .lgline::after{content:"›";position:absolute;right:-6px;top:-11px;color:var(--edge);font-size:1rem}
+  .lg-svg{vertical-align:middle}.lg-svg .ln{stroke:var(--edge);stroke-width:1.7;fill:none}.lg-svg .ah{fill:var(--edge)}
+
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .2s;z-index:18}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:min(410px,92vw);background:var(--raised);border-left:1px solid var(--border);box-shadow:-20px 0 60px rgba(0,0,0,.18);transform:translateX(100%);transition:transform .24s ease;z-index:19;display:flex;flex-direction:column}
+  .drawer.open{transform:translateX(0)}
+  .d-top{display:flex;align-items:flex-start;gap:.75rem;padding:1.3rem 1.4rem .9rem}
+  .badge{font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:.28rem .5rem;border-radius:7px;white-space:nowrap}
+  .badge.neutral{color:var(--muted);background:var(--main)}
+  .d-title{margin:.2rem 0 0;font-size:1.2rem;font-weight:700;letter-spacing:-.3px;text-wrap:balance;flex:1}
+  .d-close{border:1px solid var(--border);background:var(--surface);color:var(--muted);width:32px;height:32px;border-radius:9px;cursor:pointer;font-size:1.05rem;line-height:1;flex:0 0 auto}
+  .d-close:hover{color:var(--text);border-color:var(--border-strong)}.d-close:focus-visible{outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+  .d-nav{border:1px solid var(--border);background:var(--surface);color:var(--muted);width:32px;height:32px;border-radius:9px;cursor:pointer;font-size:1.05rem;line-height:1;flex:0 0 auto}
+  .d-nav:hover{color:var(--accent);border-color:var(--accent)}.d-nav:focus-visible{outline:none;box-shadow:0 0 0 3px var(--accent-soft)}.d-nav[hidden]{display:none}
+  .d-steps{display:flex;align-items:center;gap:.4rem;padding:0 1.4rem .5rem}.d-steps[hidden]{display:none}
+  .step-btn{flex:1;min-width:0;font:inherit;font-size:.76rem;font-weight:600;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:9px;padding:.42rem .55rem;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .step-btn:hover:not([disabled]){border-color:var(--accent);background:var(--accent-soft)}.step-btn[disabled]{opacity:.4;cursor:default}
+  .step-pos{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums;flex:0 0 auto}
+  .d-body{padding:0 1.4rem 1.6rem;overflow-y:auto;display:flex;flex-direction:column;gap:1.05rem}
+  .d-summary{margin:0;font-size:.92rem}
+  .d-sec h4{margin:0 0 .5rem;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .d-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.32rem}
+  .d-list li{font-size:.83rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.44rem .55rem}
+  .rel{display:flex;align-items:center;gap:.5rem;width:100%;text-align:left;font:inherit;font-size:.82rem;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:.44rem .55rem;cursor:pointer;color:inherit}
+  .rel:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .rel .dir{color:var(--accent);font-weight:700}.rel .lab{color:var(--muted)}.rel .tgt{font-weight:600;margin-left:auto}
+  .chips{display:flex;flex-wrap:wrap;gap:.4rem}
+  .chip{display:inline-flex;align-items:center;gap:.32rem;font-size:.78rem;font-weight:600;text-decoration:none;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:.35rem .6rem;border-radius:9px;cursor:pointer}
+  .chip:hover{border-color:var(--accent);background:var(--accent-soft)}.chip .ic{color:var(--accent)}.chip.x{border-style:dashed}
+  .pnote{font-size:.72rem;color:var(--muted);margin:.1rem 0 0}
+  @media (max-width:640px){.drawer{width:100vw;border-left:0}.stage,.mstage{padding:1rem}.brand{width:100%}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><h1>GeoTile Label <span class="dot">·</span> architecture explorer</h1>
+    <p>Three linked views — workflow pipeline, software architecture, and data model.</p></div>
+  <div class="tabs" role="tablist">
+    <button class="tab" id="tab-p" role="tab" aria-selected="true">Pipeline</button>
+    <button class="tab" id="tab-a" role="tab" aria-selected="false">Architecture</button>
+    <button class="tab" id="tab-m" role="tab" aria-selected="false">Data model</button>
+  </div>
+  <div class="search"><span class="si">⌕</span><input id="q" type="search" placeholder="Search…" autocomplete="off" aria-label="Search">
+    <div class="results" id="results" role="listbox"></div></div>
+  <button class="toggle" id="themeBtn" aria-label="Toggle theme"><span id="themeIcon">🌙</span><span id="themeLbl">Dark</span></button>
+</div>
+
+<section class="view active" id="view-p">
+  <div class="stage"><div class="pipeline" id="pipeline"></div></div>
+  <div class="strip" id="strip"><span class="lbl">Cross-cutting foundation · runs across all stages</span></div>
+</section>
+<section class="view" id="view-a">
+  <div class="mstage"><div class="diagram" id="adiagram"><svg class="edges" id="aedges"></svg></div></div>
+  <div class="legend">
+    <span class="lg"><span class="dotc ui"></span> UI</span><span class="lg"><span class="dotc be"></span> Backend</span>
+    <span class="lg"><span class="dotc infra"></span> Infrastructure</span><span class="lg"><span class="dotc ext"></span> External</span>
+    <span class="lg"><svg class="lg-svg" width="30" height="12" viewBox="0 0 30 12" aria-hidden="true"><path class="ln" d="M0 6 H21"/><polygon class="ah" points="21,2 30,6 21,10"/></svg> dependency</span></div>
+</section>
+<section class="view" id="view-m">
+  <div class="mstage"><div class="diagram" id="mdiagram"><svg class="edges" id="medges"></svg></div></div>
+  <div class="legend">
+    <span class="lg"><span class="sw canon"></span> Canonical</span><span class="lg"><span class="sw"></span> Derived / Export</span>
+    <span class="lg"><svg class="lg-svg" width="30" height="12" viewBox="0 0 30 12" aria-hidden="true"><path class="ln" d="M0 6 H21"/><polygon class="ah" points="21,2 30,6 21,10"/></svg> relationship</span></div>
+</section>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="false" aria-labelledby="dTitle" aria-hidden="true">
+  <div class="d-top"><button class="d-nav" id="dBack" aria-label="Wstecz" hidden>←</button><div style="flex:1"><span class="badge" id="dBadge">—</span><h2 class="d-title" id="dTitle">—</h2></div>
+    <button class="d-close" id="dClose" aria-label="Close">✕</button></div>
+  <div class="d-steps" id="dSteps" hidden></div>
+  <div class="d-body" id="dBody"></div>
+</aside>
+
+<script>
+/* ---------------- links ---------------- */
+const REPO="", REF="";
+const srcUrl=p=>REPO&&REF?`${REPO}/blob/${REF}/${p}`:null, DOCS="../";
+const DOCSMAP={"Input data":"input-data/index.html","Derived products":"input-data/produkty-pochodne.html","QGIS overviews":"input-data/piramidy-qgis.html","Background jobs":"reference/zadania-w-tle.html","From scene to dataset":"getting-started/od-sceny-do-datasetu.html","Annotating":"annotation/index.html","Build a dataset":"datasets/zbuduj-dataset.html","Training":"training/index.html","Export":"export/index.html","Tile catalog":"datasets/katalog-kafelkow.html"};
+const SRCMAP={"services/scene_sources":"backend/services/scene_sources.py","scene_packages/resolvers":"backend/services/scene_packages/resolvers.py","scene_packages/providers":"backend/services/scene_packages/providers/__init__.py","scene_packages/identity":"backend/services/scene_packages/identity.py","services/scene_bands":"backend/services/scene_bands.py","scene_bands":"backend/services/scene_bands.py","scene_overviews":"backend/services/scene_overviews.py","SceneRasterResolver":"backend/services/scene_raster_resolver.py","SceneGeoModel":"backend/services/sensor_geometry.py","scene_manifest":"backend/services/scene_manifest.py","annotation":"backend/routers/annotations.py","jobs":"backend/services/jobs/scheduler.py","json_index":"backend/services/json_index/queries.py","services/gsd_tiler":"backend/services/gsd_tiler.py","gsd_tiler":"backend/services/gsd_tiler.py","dataset_audit":"backend/services/dataset_audit.py","embedding_index":"backend/services/embedding_index.py","training":"backend/routers/training.py","training_resources":"backend/services/training_resources.py","training_dataset":"backend/services/training_dataset.py","artifact_exports":"backend/services/artifact_exports.py","export_sidecars":"backend/services/export_sidecars.py","tile_catalog":"backend/services/tile_catalog.py","dataset build":"backend/services/dataset_builder.py","routers/dataset":"backend/routers/dataset.py"};
+function chips(list,opts){opts=opts||{};
+  if(opts.cross)return `<div class="chips">`+list.map(x=>`<button class="chip x" data-x="${x[0]}" data-xk="${x[1]}">${x[2]}</button>`).join("")+`</div>`;
+  return `<div class="chips">`+list.map(x=>{const label=x[0];let href=null,ext=false;
+    if(opts.src){const p=SRCMAP[label];if(p){href=srcUrl(p);ext=Boolean(href);}}else{const d=DOCSMAP[label];if(d)href=DOCS+d;}
+    if(!href)return `<span class="chip" style="opacity:.5;cursor:default">${label}</span>`;
+    return `<a class="chip" href="${href}"${ext?' target="_blank" rel="noopener"':''}><span class="ic">↗</span>${label}</a>`;}).join("")+`</div>`;}
+
+/* ---------------- data (GENEROWANE — nie edytowac recznie) ----------------
+   Tresc:  docs/architecture/architecture-model.json
+   Uklad:  docs/architecture/explorer-layout.json
+   Skrypt: scripts/generate-architecture-explorer.py
+   ------------------------------------------------------------------------- */
+const P=[
+ {"id":"sources","kind":"Input","title":"Data sources","summary":"Lokalne paczki dostawcow i podklady - wejscie potoku. Nic nie opuszcza stanowiska.","items":[["SAR packages","ICEYE · Capella · Umbra"],["EO packages","Pléiades 1 / Neo · WorldView · BlackSky"],["Airborne / UAV imagery","GeoTIFF · NITF"]],"docs":[["Input data","#"]],"source":[["services/scene_sources","#"]]},
+ {"id":"import","kind":"Stage","title":"Import & raster access","summary":"Trwaly, progresywny import produktu, widoku roboczego, georeferencji, piramid i derywatu pelnej rozdzielczosci.","items":[["provider-specific package resolvers",""],["asset selection",""],["persistent import jobs",""],["metadata & source identity",""],["SceneRasterResolver",""],["VRT / mosaic / pansharpening",""],["project overviews / external .ovr",""],["published full-resolution COG",""],["affine & GCP/TPS georeferencing",""],["display asset contract","source_max_zoom vs available_native_zoom"],["archives · relink · import report",""],["manifest migration v1→v2",""],["radiometry & processing provenance",""]],"engine":["GDAL","rasterio","PROJ"],"docs":[["Derived products","#"],["QGIS overviews","#"],["Background jobs","#"]],"source":[["services/scene_bands","#"],["scene_overviews","#"],["SceneRasterResolver","#"],["jobs","#"]]},
+ {"id":"canonical","kind":"Canonical hub","title":"Canonical Geospatial Dataset","summary":"Serce systemu: bogaty w pochodzenie kanoniczny zbior, z ktorego wyliczane sa produkty pochodne. Sceny sa referencjonowane, nie kopiowane.","items":[["source scene references",""],["working views",""],["source annotations",""],["scene manifests",""],["acquisition metadata",""],["spatial geometry & provenance",""]],"hub":true,"docs":[["From scene to dataset","#"]],"source":[["SceneGeoModel","#"],["scene_manifest","#"]]},
+ {"id":"annotation","kind":"Stage","title":"Annotation & QA","summary":"Oznaczanie na pelnej scenie ze wsparciem AI i kontrola jakosci zespolu.","items":[["AABB / OBB manual annotation",""],["SAM · YOLO · template/DINO assist",""],["review grid",""],["team annotation packages",""],["manager review",""],["annotation provenance",""]],"engine":["SAM","DINO"],"docs":[["Annotating","#"]],"source":[["annotation","#"]]},
+ {"id":"generation","kind":"Stage","title":"Dataset generation","summary":"Trwala budowa wersjonowanego zbioru z przestrzennie uczciwym podzialem, audytem i odbudowywalnymi indeksami.","items":[["metadata-only tile catalog",""],["versioned JSON indexes",""],["preprocessing profiles",""],["filtering",""],["spatial split",""],["negative samples",""],["immutable dataset runs",""],["leakage audit & statistics",""],["dataset statistics","imbalance · geometry · co-occurrence · acquisition"],["ANN analysis",""]],"docs":[["Build a dataset","#"],["Background jobs","#"]],"source":[["services/gsd_tiler","#"],["json_index","#"],["dataset_audit","#"],["embedding_index","#"]]},
+ {"id":"training","kind":"Stage","title":"Training & analysis","summary":"Trening i inferencja w zamknietej petli aplikacji, z analiza podobienstwa klas i telemetria zasobow.","items":[["YOLO AABB/OBB training",""],["prediction",""],["class similarity analysis",""],["metrics & confusion matrix",""],["model registry",""],["adaptive batch/workers/cache preflight",""],["shared staging cache",""],["batched scene prediction",""],["performance telemetry",""]],"engine":["PyTorch","Ultralytics"],"docs":[["Training","#"],["Background jobs","#"]],"source":[["training","#"],["training_resources","#"],["training_dataset","#"]]},
+ {"id":"exports","kind":"Output","title":"Exports","summary":"Trwale, cache'owane artefakty z formatami uczacymi, georeferencja, manifestami i audytem.","items":[["YOLO · COCO · Pascal VOC",""],["GeoParquet (native / WGS84) · GeoJSON · GeoPackage",""],["acquisition metadata sidecars",""],["manifests · checksums · audit report",""],["reusable ZIP dataset package",""],["atomic ZIP artifacts & cache",""]],"engine":["GeoParquet (pyarrow)","GDAL"],"docs":[["Export","#"],["Background jobs","#"]],"source":[["artifact_exports","#"],["export_sidecars","#"]]}
+];
+const TECH=["Tauri desktop","React / TypeScript","FastAPI","GDAL / rasterio / PROJ","PyTorch / Ultralytics","Local storage"];
+const A={
+ input:{"layer":"ext","x":40,"y":40,"w":250,"title":"Input - local data","summary":"Lokalne dane wejsciowe: paczki EO/SAR, NITF.","parts":["GeoTIFF · COG · EO/SAR packages · NITF"],"docs":[["Input data","#"]],"source":[["services/scene_sources","#"]]},
+ tauri:{"layer":"ui","x":300,"y":150,"w":250,"title":"Tauri","summary":"Powloka desktop: osadza React w WebView, uruchamia i kontroluje sidecar FastAPI, natywne dialogi i cykl zycia.","parts":["embeds React in a WebView","launches/controls FastAPI sidecar","native dialogs · app lifecycle"],"docs":[],"source":[]},
+ react:{"layer":"ui","x":620,"y":150,"w":320,"title":"React / TypeScript UI","summary":"Interfejs: kanwa sceny, modul datasetu, panel wyswietlania.","parts":["SceneCanvas · SceneMapCanvas","LabelView · Dataset module · BandSelector","display panel (histogram / percentiles)"],"docs":[["Annotating","#"]],"source":[]},
+ routers:{"layer":"be","x":300,"y":300,"w":320,"title":"Routers (FastAPI)","summary":"Warstwa HTTP API; deleguje do resolverow, uslug i menedzera zadan.","parts":["projects · projects/nitf · scenes","dataset · scan · scene_import · jobs"],"docs":[],"source":[["routers/dataset","#"]]},
+ scene_res:{"layer":"be","x":40,"y":450,"w":250,"title":"Scene package resolvers","summary":"Rozpoznanie dostawy, wybor produktu i zasobow, ekstrakcja metadanych, tozsamosc.","parts":["provider resolvers (ICEYE · Capella · Pléiades · WorldView)","identity · archives · mosaics · radiometry"],"docs":[["Derived products","#"]],"source":[["scene_packages/resolvers","#"],["scene_packages/providers","#"],["scene_packages/identity","#"]]},
+ raster_res:{"layer":"be","x":300,"y":450,"w":250,"title":"SceneRasterResolver","summary":"Odczyt okna sceny, widok roboczy, VRT/pansharpen, wybor aktywnego zasobu wyswietlania.","parts":["read_scene_window · working raster","VRT · pansharpen"],"docs":[["Derived products","#"]],"source":[["SceneRasterResolver","#"]]},
+ geo:{"layer":"be","x":560,"y":450,"w":250,"title":"SceneGeoModel","summary":"Model geometrii sceny (affine | gcp_tps), footprinty przez TPS.","parts":["affine | gcp_tps · sensor_geometry","footprints (TPS densification)"],"docs":[["From scene to dataset","#"]],"source":[["SceneGeoModel","#"]]},
+ jobs:{"layer":"be","x":1110,"y":450,"w":250,"title":"Background job manager","summary":"Trwale zadania w tle: import, budowa piramid, derywat pelnej rozdzielczosci, eksporty i kopie zapasowe. Anulowanie i wznawianie, izolowane procesy robocze.","parts":["scheduler · store · processes","durable jobs · cancel / resume","isolated worker processes"],"docs":[["Background jobs","#"]],"source":[["jobs","#"]]},
+ dsvc:{"layer":"be","x":820,"y":450,"w":270,"title":"Dataset & export services","summary":"Kaflowanie, audyt przecieku, eksport, atrybuty, ingest NITF, statystyki datasetu.","parts":["gsd_tiler · dataset_audit","export_sidecars · attribute_engine","nitf: ingest · metadata"],"docs":[["Build a dataset","#"]],"source":[["services/gsd_tiler","#"],["dataset_audit","#"],["export_sidecars","#"]]},
+ source_pkgs:{"layer":"infra","x":40,"y":620,"w":250,"title":"Source imagery packages","summary":"Zrodla read-only: paczki EO/SAR, NITF.","parts":["GeoTIFF · COG · EO/SAR · NITF","unmodified sources"],"docs":[["Input data","#"]],"source":[["services/scene_sources","#"]]},
+ raster:{"layer":"infra","x":300,"y":620,"w":250,"title":"Raster processing","summary":"GDAL/rasterio i PROJ - odczyt/zapis rastrow i uklady odniesienia.","parts":["GDAL / rasterio · PROJ"],"docs":[],"source":[["SceneRasterResolver","#"]]},
+ storage:{"layer":"infra","x":560,"y":620,"w":250,"title":"Project storage","summary":"Read/write: manifesty scen, adnotacje zrodlowe, metadata-only tile catalogs, dataset runs, derived_scenes.","parts":["scene manifests · source annotations","metadata-only tile catalogs","dataset runs · derived_scenes (overviews · full-res COG)"],"docs":[["Tile catalog","#"]],"source":[["scene_manifest","#"],["tile_catalog","#"]]},
+ ai:{"layer":"infra","x":820,"y":620,"w":270,"title":"AI runtime","summary":"Lokalny, offline: SAM, DINO, YOLO; user-configured model repository.","parts":["SAM · DINO · YOLO (training/prediction)","user-configured model repository"],"docs":[["Training","#"]],"source":[["training","#"]]},
+ output:{"layer":"ext","x":1120,"y":620,"w":250,"title":"Output — artifacts","summary":"Artefakty wyjsciowe: YOLO/COCO/VOC, GeoParquet, manifesty i audyt.","parts":["YOLO / COCO / VOC","GeoParquet · manifests + audit"],"docs":[["Export","#"]],"source":[["export_sidecars","#"]]}
+};
+const AREL=[{"from":"input","to":"scene_res","label":"import / scan"},{"from":"tauri","to":"react","label":"embeds (WebView)"},{"from":"tauri","to":"routers","label":"launches sidecar"},{"from":"react","to":"routers","label":"HTTP/JSON + SSE · localhost · session token"},{"from":"routers","to":"scene_res","label":"delegates"},{"from":"routers","to":"raster_res","label":"delegates"},{"from":"routers","to":"dsvc","label":"delegates"},{"from":"routers","to":"jobs","label":"delegates"},{"from":"scene_res","to":"source_pkgs","label":"read-only"},{"from":"raster_res","to":"raster","label":"GDAL / rasterio"},{"from":"geo","to":"storage","label":"footprints"},{"from":"jobs","to":"storage","label":"job state"},{"from":"jobs","to":"raster","label":"overviews / COG build"},{"from":"dsvc","to":"storage","label":"dataset runs"},{"from":"dsvc","to":"ai","label":"inference / training"},{"from":"dsvc","to":"output","label":"export"}];
+const ABOUND=[{"ids":["tauri","react"],"label":"Desktop application · offline"},{"ids":["routers","scene_res","raster_res","geo","jobs","dsvc"],"label":"Backend · FastAPI · bundled runtime"},{"ids":["source_pkgs","raster","storage","ai"],"label":"Infrastructure · local runtime"}];
+const LAYNAME={ui:"UI",be:"Backend",infra:"Infra",ext:"External"};
+
+const MX=30,MRX=420,MX3=810,MW=300,MR={"r1":70,"r2":238,"r3":406,"r4":574,"r5":742};
+const N={
+ Scene:{"layer":"canonical",x:MX,y:MR.r1,"summary":"Kanoniczna scena zrodlowa - referencja do rastra, model geometrii i metadane. Nie jest kopiowana.","attrs":["source_scene_uid","format: GeoTIFF·JP2·NITF·PNG·JPEG","SceneGeoModel: affine | gcp_tps","manifest: geometry/metadata/source_identity","gsd_m (optional)"],"docs":[["From scene to dataset","#"]],"source":[["SceneGeoModel","#"],["scene_manifest","#"]]},
+ SourceAnnotation:{"layer":"canonical",x:MX,y:MR.r2,"summary":"Kanoniczna adnotacja na pikselach sceny; opcjonalna geometria przestrzenna; pelne pochodzenie i autor.","attrs":["annotation_id","geometry_scene_px: AABB | OBB","spatial_geometry: WGS84 (optional)","working_grid_uid","class_label · provenance · author"],"docs":[["Annotating","#"]],"source":[["annotation","#"]]},
+ TileAnnotation:{"layer":"derived",x:MX,y:MR.r3,"summary":"Adnotacja rzutowana na konkretny kafel - produkt pochodny SourceAnnotation.","attrs":["from SourceAnnotation → tile","geometry_tile_px","class_label"],"docs":[["Build a dataset","#"]],"source":[["gsd_tiler","#"]]},
+ WorkingView:{"layer":"derived",x:MRX,y:MR.r1,"summary":"Regenerowalny widok roboczy sceny (VRT / wybor pasm / pansharpen) oraz zasoby wyswietlania z niego wyprowadzone - nie zrodlo prawdy.","attrs":["working_grid_uid","kind: VRT | band selection | pansharpen","display asset: project overview · full-res COG","regenerable derived view","derived_scenes: full-res COG · display overview · materialized view · virtual view · manifests · incomplete build files","display contract: source_max_zoom vs available_native_zoom","radiometry & processing provenance (processing_manifest.json)"],"docs":[["Derived products","#"]],"source":[["scene_bands","#"]]},
+ TileDefinition:{"layer":"derived","sub":"metadata-only",x:MRX,y:MR.r2,"summary":"Definicja kafla - okno, footprint, status przegladu. Katalog trzyma wylacznie metadane.","attrs":["tile_id","window_px · footprint_wgs84 (affine|TPS)","review_status"],"docs":[["Tile catalog","#"]],"source":[["tile_catalog","#"]]},
+ DatasetSample:{"layer":"derived","sub":"materialized",x:MRX,y:MR.r3,"summary":"Zmaterializowana probka: obraz 8-bit RGB + etykiety, z przypisaniem do splitu.","attrs":["image: 8-bit RGB","labels: YOLO / OBB","split: train | val | test"],"docs":[["Build a dataset","#"]],"source":[["dataset build","#"]]},
+ DatasetRun:{"layer":"derived","sub":"immutable",x:MRX,y:MR.r4,"summary":"Niezmienny, wersjonowany przebieg zbioru ze snapshotem konfiguracji, ziarnem i audytem.","attrs":["run_id (immutable)","config: size/overlap/split/seed/target_gsd","filters snapshot · used_tiles","leakage audit · metadata sidecar","allow_mixed_radiometry (jawna zgoda, zapisana w manifescie runu)"],"docs":[["Build a dataset","#"]],"source":[["routers/dataset","#"],["dataset_audit","#"]]},
+ Export:{"layer":"export",x:MRX,y:MR.r5,"summary":"Artefakt eksportu - formaty uczace i geoprzestrzenne z zachowana georeferencja, plus manifesty i audyt.","attrs":["ml: YOLO / COCO / VOC","spatial: GeoJSON / GeoPackage / GeoParquet","flags: transform_model · approximate · orthorectified=false"],"docs":[["Export","#"]],"source":[["export_sidecars","#"]]},
+ Delivery:{"layer":"source",x:MX3,y:MR.r1,"summary":"Paczka dostawcy jako calosc - katalog albo archiwum. Zrodlo pozostaje tylko do odczytu.","attrs":["delivery_uid","shape: single file | multipart mosaic | archive","declared_provider vs detected_provider"],"docs":[["Input data","#"]],"source":[["services/scene_sources","#"]]},
+ Acquisition:{"layer":"source",x:MX3,y:MR.r2,"summary":"Pojedyncza akwizycja w dostawie: czas, sensor, geometria obserwacji.","attrs":["acquisition_id","acquisition_datetime_utc","sensor · modality · incidence angle"],"docs":[["Input data","#"]],"source":[]},
+ Product:{"layer":"source",x:MX3,y:MR.r3,"summary":"Produkt dostawcy w ramach akwizycji (np. PAN, MUL, PMS). Przy wielu produktach wybor nalezy do uzytkownika.","attrs":["product_type","raster_kind: direct | virtual_mosaic | derived","status: ready | decision_required | prepare_required | invalid"],"docs":[["Input data","#"]],"source":[]},
+ Asset:{"layer":"source",x:MX3,y:MR.r4,"summary":"Pojedynczy plik dostawy z jawna rola. Rozdzielenie rol jest tym, co pozwala nie mylic zrodla z widokiem roboczym ani z produktem analitycznym.","attrs":["asset_id · format · size","role: source_measurement | labeling_view | analytic_view | display_overview","identity_strength · content_signature"],"docs":[["Input data","#"]],"source":[]}
+};
+const REL=[{"from":"Scene","to":"WorkingView","label":"derives 1..*"},{"from":"Scene","to":"SourceAnnotation","label":"owns 0..*"},{"from":"SourceAnnotation","to":"TileAnnotation","label":"projected to 0..*"},{"from":"WorkingView","to":"TileDefinition","label":"tiles into 0..*"},{"from":"TileDefinition","to":"TileAnnotation","label":"locates"},{"from":"TileDefinition","to":"DatasetSample","label":"materialized (image)"},{"from":"TileAnnotation","to":"DatasetSample","label":"labels"},{"from":"DatasetSample","to":"DatasetRun","label":"included in 1..*"},{"from":"DatasetRun","to":"Export","label":"produces 1..*"},{"from":"Delivery","to":"Acquisition","label":"contains 1..*"},{"from":"Acquisition","to":"Product","label":"yields 1..*"},{"from":"Product","to":"Asset","label":"consists of 1..*"},{"from":"Product","to":"Scene","label":"catalogued as 0..1"}];
+const MBOUND=[{"ids":["Scene","SourceAnnotation","TileAnnotation"],"label":"Canonical / annotation layer"},{"ids":["WorkingView","TileDefinition","DatasetSample","DatasetRun","Export"],"label":"Derived dataset layer"},{"ids":["Delivery","Acquisition","Product","Asset"],"label":"Provider delivery graph"}];
+const STEREO={"canonical":"«canonical»","derived":"«derived»","export":"«export»","source":"«source»"};
+/* cross-figure maps */
+const P2E={"sources":["Scene","Delivery","Acquisition","Product","Asset"],"import":["WorkingView","Scene","Product","Asset"],"canonical":["Scene","SourceAnnotation","WorkingView"],"annotation":["SourceAnnotation","TileAnnotation"],"generation":["TileDefinition","TileAnnotation","DatasetSample","DatasetRun"],"training":["DatasetRun","DatasetSample"],"exports":["Export"]};
+const P2A={"sources":["input","source_pkgs"],"import":["scene_res","raster_res","raster","jobs"],"canonical":["geo","storage"],"annotation":["react","routers"],"generation":["dsvc","storage"],"training":["ai","dsvc"],"exports":["dsvc","output"]};
+const A2E={"react":["SourceAnnotation"],"scene_res":["Scene","WorkingView","Delivery","Product","Asset"],"raster_res":["WorkingView"],"geo":["Scene"],"dsvc":["TileDefinition","DatasetSample","DatasetRun","Export"],"source_pkgs":["Scene"],"storage":["Scene","SourceAnnotation","TileDefinition","DatasetRun"],"ai":["DatasetRun"],"output":["Export"],"jobs":["WorkingView"]};
+const rev=m=>{const o={};for(const k in m)m[k].forEach(v=>{(o[v]=o[v]||[]).push(k);});return o;};
+const E2P=rev(P2E),A2P=rev(P2A),E2A=rev(A2E);
+const Pmap=Object.fromEntries(P.map(p=>[p.id,p])),Pidx=Object.fromEntries(P.map((p,i)=>[p.id,i]));
+const labelFor=(k,id)=>k==="p"?Pmap[id].title:(k==="a"?A[id].title:id);
+const crossChips=(ids,k)=>chips(ids.map(id=>[id,k,labelFor(k,id)]),{cross:true});
+
+/* ---------------- generic geometry ---------------- */
+const SVGNS="http://www.w3.org/2000/svg";
+function mk(t,a){const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+function route(a,b){const below=b.t-a.b,above=a.t-b.b,right=b.l-a.r,left=a.l-b.r;
+  if(below>=-10&&below>=right&&below>=left){const x1=a.cx,y1=a.b,x2=b.cx,y2=b.t,my=(y1+y2)/2,sm=Math.abs(x1-x2)<2;return{pts:[[x1,y1],[x1,my],[x2,my],[x2,y2]],tip:[x2,y2],dir:"down",lx:sm?x1+8:(x1+x2)/2,ly:sm?my-3:my-6,an:sm?"start":"middle"};}
+  if(above>=-10&&above>=right&&above>=left){const x1=a.cx,y1=a.t,x2=b.cx,y2=b.b,my=(y1+y2)/2,sm=Math.abs(x1-x2)<2;return{pts:[[x1,y1],[x1,my],[x2,my],[x2,y2]],tip:[x2,y2],dir:"up",lx:sm?x1+8:(x1+x2)/2,ly:sm?my-3:my-6,an:sm?"start":"middle"};}
+  if(right>=left){const x1=a.r,y1=a.cy,x2=b.l,y2=b.cy,mx=(x1+x2)/2;return{pts:[[x1,y1],[mx,y1],[mx,y2],[x2,y2]],tip:[x2,y2],dir:"right",lx:mx,ly:(y1+y2)/2-6,an:"middle"};}
+  const x1=a.l,y1=a.cy,x2=b.r,y2=b.cy,mx=(x1+x2)/2;return{pts:[[x1,y1],[mx,y1],[mx,y2],[x2,y2]],tip:[x2,y2],dir:"left",lx:mx,ly:(y1+y2)/2-6,an:"middle"};}
+function arrow(tip,dir){const[x,y]=tip;let p;if(dir==="down")p=`${x-5},${y-8} ${x+5},${y-8} ${x},${y}`;else if(dir==="up")p=`${x-5},${y+8} ${x+5},${y+8} ${x},${y}`;else if(dir==="right")p=`${x-8},${y-5} ${x-8},${y+5} ${x},${y}`;else p=`${x+8},${y-5} ${x+8},${y+5} ${x},${y}`;return mk("polygon",{points:p});}
+
+function makeGraph(cfg){
+  const {container,svg,nodes,rels,bounds,preview,defW,layerClass,onSelect}=cfg;
+  const els={},R2={},edgeEls=[];let built=false;
+  const nbrs={};Object.keys(nodes).forEach(k=>nbrs[k]=new Set());rels.forEach(r=>{nbrs[r.from].add(r.to);nbrs[r.to].add(r.from);});
+  for(const[id,n]of Object.entries(nodes)){
+    const b=document.createElement("button");b.className="node"+(layerClass?(" "+layerClass(n)):"");b.dataset.id=id;
+    b.style.left=n.x+"px";b.style.top=n.y+"px";b.style.width=(n.w||defW)+"px";b.innerHTML=preview(id,n);
+    b.addEventListener("click",()=>onSelect(id));container.appendChild(b);els[id]=b;
+  }
+  function ensure(){if(built)return;
+    for(const[id,el]of Object.entries(els)){const r={l:el.offsetLeft,t:el.offsetTop,w:el.offsetWidth,h:el.offsetHeight};r.cx=r.l+r.w/2;r.cy=r.t+r.h/2;r.r=r.l+r.w;r.b=r.t+r.h;R2[id]=r;}
+    const f=Object.values(R2)[0];if(!f||f.w===0)return;
+    const totW=Math.max(...Object.values(R2).map(r=>r.r))+30,totH=Math.max(...Object.values(R2).map(r=>r.b))+30;
+    container.style.width=totW+"px";container.style.height=totH+"px";svg.setAttribute("viewBox",`0 0 ${totW} ${totH}`);svg.setAttribute("width",totW);svg.setAttribute("height",totH);
+    bounds.forEach(bd=>{const rs=bd.ids.map(i=>R2[i]);const l=Math.min(...rs.map(r=>r.l))-16,t=Math.min(...rs.map(r=>r.t))-26,r=Math.max(...rs.map(r=>r.r))+16,bt=Math.max(...rs.map(r=>r.b))+14;
+      const d=document.createElement("div");d.className="bound";d.style.cssText=`left:${l}px;top:${t}px;width:${r-l}px;height:${bt-t}px`;d.innerHTML=`<span class="blabel">${bd.label}</span>`;container.insertBefore(d,svg.nextSibling);});
+    rels.forEach(rel=>{const g=route(R2[rel.from],R2[rel.to]);const d=g.pts.map((p,i)=>`${i?"L":"M"} ${p[0]} ${p[1]}`).join(" ");
+      const path=mk("path",{d,class:"edge"}),ar=arrow(g.tip,g.dir);ar.setAttribute("class","earrow");const t=mk("text",{x:g.lx,y:g.ly,class:"elabel","text-anchor":g.an});t.textContent=rel.label;
+      svg.append(path,ar,t);edgeEls.push({rel,path,ar,t});});
+    built=true;
+  }
+  function highlight(id){ensure();
+    Object.entries(els).forEach(([k,el])=>{el.classList.toggle("sel",k===id);el.classList.toggle("nb",nbrs[id].has(k));});
+    container.classList.add("focus");
+    edgeEls.forEach(({rel,path,ar,t})=>{const h=rel.from===id||rel.to===id;[path,ar,t].forEach(e=>e.classList.toggle("hot",h));});}
+  function clear(){Object.values(els).forEach(el=>el.classList.remove("sel","nb"));container.classList.remove("focus");edgeEls.forEach(({path,ar,t})=>[path,ar,t].forEach(e=>e.classList.remove("hot")));}
+  return {ensure,highlight,clear};
+}
+
+/* ---------------- render pipeline ---------------- */
+const pipeline=document.getElementById("pipeline");
+P.forEach((p,i)=>{
+  if(i>0){const c=document.createElement("div");c.className="chev";c.textContent="›";c.setAttribute("aria-hidden","true");pipeline.appendChild(c);}
+  const b=document.createElement("button");b.className="phase"+(p.hub?" hub":"");b.dataset.id=p.id;b.setAttribute("aria-pressed","false");
+  if(p.hub)b.innerHTML=`<div class="p-head"><span class="p-step">${i+1}</span>${p.title}</div><div style="flex:1;display:flex;align-items:center;justify-content:center"><div class="hex"><span class="hub-tag">Canonical</span><h3>${p.title}</h3><ul>${p.items.map(it=>`<li>${it[0]}</li>`).join("")}</ul></div></div>`;
+  else b.innerHTML=`<div class="p-head"><span class="p-step">${i+1}</span>${p.title}</div><div class="items">${p.items.map(it=>`<div class="item">${it[0]}</div>`).join("")}</div>`+(p.engine?`<div class="p-engine"><span class="ei">⚙</span>${p.engine.join(" · ")}</div>`:"");
+  b.addEventListener("click",()=>select("p",p.id));pipeline.appendChild(b);
+});
+const strip=document.getElementById("strip");
+TECH.forEach((t,i)=>{if(i){const s=document.createElement("span");s.className="sep";s.textContent="·";strip.appendChild(s);}const s=document.createElement("span");s.className="seg";s.textContent=t;strip.appendChild(s);});
+
+/* ---------------- graphs ---------------- */
+const gArch=makeGraph({container:document.getElementById("adiagram"),svg:document.getElementById("aedges"),nodes:A,rels:AREL,bounds:ABOUND,defW:230,
+  layerClass:()=>"",preview:(id,n)=>`<div class="nhead"><span class="nname">${n.title}</span><span class="nbadge lay-${n.layer}">${LAYNAME[n.layer]}</span></div>`+n.parts.map(a=>`<div class="nattr">${a}</div>`).join(""),
+  onSelect:id=>select("a",id)});
+const gModel=makeGraph({container:document.getElementById("mdiagram"),svg:document.getElementById("medges"),nodes:N,rels:REL,bounds:MBOUND,defW:300,
+  layerClass:n=>n.layer==="canonical"?"canon":"",preview:(id,n)=>{const badge=n.layer==="canonical"?STEREO.canonical:(n.layer==="export"?STEREO.export:STEREO.derived);return `<div class="nhead"><span class="nname">${id}</span><span class="nbadge">${badge}</span></div>`+n.attrs.map(a=>`<div class="nattr">${a}</div>`).join("");},
+  onSelect:id=>select("m",id)});
+
+/* ---------------- views + drawer ---------------- */
+const drawer=document.getElementById("drawer"),scrim=document.getElementById("scrim"),dBadge=document.getElementById("dBadge"),dTitle=document.getElementById("dTitle"),dBody=document.getElementById("dBody"),dBack=document.getElementById("dBack"),dSteps=document.getElementById("dSteps");
+const V={p:document.getElementById("view-p"),a:document.getElementById("view-a"),m:document.getElementById("view-m")};
+const T={p:document.getElementById("tab-p"),a:document.getElementById("tab-a"),m:document.getElementById("tab-m")};
+let currentView="p",lastFocus=null;
+function switchView(v){currentView=v;for(const k in V){V[k].classList.toggle("active",k===v);T[k].setAttribute("aria-selected",k===v);}if(v==="a")gArch.ensure();if(v==="m")gModel.ensure();}
+Object.keys(T).forEach(k=>T[k].addEventListener("click",()=>{switchView(k);clearAll();}));
+function clearAll(){document.querySelectorAll(".phase").forEach(el=>el.setAttribute("aria-pressed","false"));pipeline.classList.remove("focus");gArch.clear();gModel.clear();}
+function openDrawer(){if(!drawer.classList.contains("open"))lastFocus=document.activeElement;drawer.classList.add("open");scrim.classList.add("open");drawer.setAttribute("aria-hidden","false");document.getElementById("dClose").focus();}
+function sec(title,html){return html?`<div class="d-sec"><h4>${title}</h4>${html}</div>`:"";}
+
+let navStack=[],current=null;
+function renderSteps(id){const i=Pidx[id],pv=i>0?P[i-1].id:null,nx=i<P.length-1?P[i+1].id:null;
+  dSteps.innerHTML=`<button class="step-btn" ${pv?`data-x="${pv}" data-xk="p"`:"disabled"}>← ${pv?Pmap[pv].title:"Start"}</button><span class="step-pos">${i+1} / ${P.length}</span><button class="step-btn" ${nx?`data-x="${nx}" data-xk="p"`:"disabled"}>${nx?Pmap[nx].title:"End"} →</button>`;
+  dSteps.querySelectorAll("[data-x]").forEach(el=>el.addEventListener("click",()=>select(el.dataset.xk,el.dataset.x)));}
+function applySelect(kind,id){current={kind,id};
+  if(kind==="p"){switchView("p");selPipe(id);renderSteps(id);dSteps.hidden=false;}
+  else if(kind==="a"){switchView("a");selArch(id);dSteps.hidden=true;}
+  else{switchView("m");selModel(id);dSteps.hidden=true;}
+  history.replaceState(null,"","#"+kind+":"+id);dBack.hidden=navStack.length===0;openDrawer();
+  dBody.querySelectorAll("[data-x]").forEach(el=>el.addEventListener("click",()=>select(el.dataset.xk,el.dataset.x)));}
+function select(kind,id){if(current&&!(current.kind===kind&&current.id===id))navStack.push(current);applySelect(kind,id);}
+function goBack(){if(!navStack.length)return;const p=navStack.pop();applySelect(p.kind,p.id);}
+dBack.addEventListener("click",goBack);
+function selPipe(id){const p=Pmap[id];if(!p)return;clearAll();
+  document.querySelectorAll(".phase").forEach(el=>el.setAttribute("aria-pressed",el.dataset.id===id?"true":"false"));pipeline.classList.add("focus");
+  dBadge.textContent=p.kind;dBadge.className="badge"+(p.hub?"":" neutral");dTitle.textContent=p.title;
+  dBody.innerHTML=`<p class="d-summary">${p.summary}</p>`+
+    sec("Elements",`<ul class="d-list">${p.items.map(it=>`<li><strong>${it[0]}</strong>${it[1]?` — <span style="color:var(--muted)">${it[1]}</span>`:""}</li>`).join("")}</ul>`)+
+    sec("Implemented by (architecture)",(P2A[id]||[]).length?crossChips(P2A[id],"a"):"")+
+    sec("In the data model",(P2E[id]||[]).length?crossChips(P2E[id],"m"):"")+
+    sec("Documentation",chips(p.docs))+sec("Source",chips(p.source,{src:true})+`<p class="pnote">Source → repozytorium na tagu REF.</p>`);
+}
+function selArch(id){const n=A[id];if(!n)return;clearAll();gArch.highlight(id);
+  dBadge.textContent=LAYNAME[n.layer];dBadge.className="badge neutral";dTitle.textContent=n.title;
+  dBody.innerHTML=`<p class="d-summary">${n.summary}</p>`+
+    sec("Responsibilities",n.parts.length?`<ul class="d-list">${n.parts.map(p=>`<li>${p}</li>`).join("")}</ul>`:"")+
+    sec("Implements (pipeline)",(A2P[id]||[]).length?crossChips(A2P[id],"p"):"")+
+    sec("Handles (data model)",(A2E[id]||[]).length?crossChips(A2E[id],"m"):"")+
+    sec("Documentation",n.docs.length?chips(n.docs):"")+
+    sec("Source",n.source.length?chips(n.source,{src:true})+`<p class="pnote">Source → repozytorium na tagu REF.</p>`:"");
+}
+function selModel(id){const n=N[id];if(!n)return;clearAll();gModel.highlight(id);
+  const badge=n.layer==="canonical"?STEREO.canonical:(n.layer==="export"?STEREO.export:STEREO.derived);
+  dBadge.textContent=badge+(n.sub?" · "+n.sub:"");dBadge.className="badge"+(n.layer==="canonical"?"":" neutral");dTitle.textContent=id;
+  const out=REL.filter(r=>r.from===id),inc=REL.filter(r=>r.to===id);
+  const relRow=(r,dir,other)=>`<button class="rel" data-x="${other}" data-xk="m"><span class="dir">${dir}</span><span class="lab">${r.label}</span><span class="tgt">${other}</span></button>`;
+  dBody.innerHTML=`<p class="d-summary">${n.summary}</p>`+
+    sec("Attributes",`<ul class="d-list">${n.attrs.map(a=>`<li>${a}</li>`).join("")}</ul>`)+
+    sec("Relationships",(out.length||inc.length)?`<div style="display:flex;flex-direction:column;gap:.35rem">${out.map(r=>relRow(r,"→",r.to)).join("")}${inc.map(r=>relRow(r,"←",r.from)).join("")}</div>`:"")+
+    sec("Handled by (architecture)",(E2A[id]||[]).length?crossChips(E2A[id],"a"):"")+
+    sec("In the pipeline",(E2P[id]||[]).length?crossChips(E2P[id],"p"):"")+
+    sec("Documentation",chips(n.docs))+sec("Source",chips(n.source,{src:true})+`<p class="pnote">Source → repozytorium na tagu REF.</p>`);
+}
+function closeD(){drawer.classList.remove("open");scrim.classList.remove("open");drawer.setAttribute("aria-hidden","true");navStack=[];current=null;dBack.hidden=true;dSteps.hidden=true;clearAll();history.replaceState(null,"",location.pathname+location.search);if(lastFocus)lastFocus.focus();}
+document.getElementById("dClose").addEventListener("click",closeD);scrim.addEventListener("click",closeD);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(results.classList.contains("open"))hideR();else if(drawer.classList.contains("open"))closeD();}});
+
+/* ---------------- search ---------------- */
+const INDEX=[...P.map(p=>({k:"p",id:p.id,label:p.title,kind:"Pipeline",hay:(p.title+" "+p.items.map(i=>i[0]).join(" ")).toLowerCase()})),
+  ...Object.entries(A).map(([id,n])=>({k:"a",id,label:n.title,kind:"Architecture",hay:(n.title+" "+n.parts.join(" ")+" "+n.summary).toLowerCase()})),
+  ...Object.entries(N).map(([id,n])=>({k:"m",id,label:id,kind:"Data model",hay:(id+" "+n.attrs.join(" ")+" "+n.summary).toLowerCase()}))];
+const q=document.getElementById("q"),results=document.getElementById("results");let acts=[],actI=-1;
+function renderR(list){results.innerHTML=list.map(r=>`<button class="res" data-k="${r.k}" data-id="${r.id}"><span class="rdot c-${r.k}"></span><span class="rl">${r.label}</span><span class="rk">${r.kind}</span></button>`).join("")||`<div class="res" style="color:var(--muted);cursor:default">No matches</div>`;
+  acts=[...results.querySelectorAll(".res[data-id]")];actI=-1;acts.forEach(a=>a.addEventListener("click",()=>{select(a.dataset.k,a.dataset.id);hideR();q.blur();}));}
+function showR(){const v=q.value.trim().toLowerCase();renderR(v?INDEX.filter(r=>r.hay.includes(v)).slice(0,9):INDEX.slice(0,9));results.classList.add("open");}
+function hideR(){results.classList.remove("open");}
+q.addEventListener("input",showR);q.addEventListener("focus",showR);
+q.addEventListener("keydown",e=>{if(e.key==="ArrowDown"){e.preventDefault();actI=Math.min(actI+1,acts.length-1);}else if(e.key==="ArrowUp"){e.preventDefault();actI=Math.max(actI-1,0);}else if(e.key==="Enter"){const a=acts[actI]||acts[0];if(a){select(a.dataset.k,a.dataset.id);hideR();q.blur();}return;}else return;
+  acts.forEach((a,i)=>a.classList.toggle("act",i===actI));if(acts[actI])acts[actI].scrollIntoView({block:"nearest"});});
+document.addEventListener("click",e=>{if(!e.target.closest(".search"))hideR();});
+
+/* ---------------- theme + deep-link ---------------- */
+const root=document.documentElement,tBtn=document.getElementById("themeBtn"),tIcon=document.getElementById("themeIcon"),tLbl=document.getElementById("themeLbl");
+function setTheme(m){root.setAttribute("data-theme",m);const d=m==="dark";tIcon.textContent=d?"🌙":"☀️";tLbl.textContent=d?"Dark":"Light";}
+tBtn.addEventListener("click",()=>setTheme(root.getAttribute("data-theme")==="dark"?"light":"dark"));
+setTheme(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");
+if(location.hash){const m=location.hash.slice(1).split(":");const ok=m.length===2&&(m[0]==="p"?Pmap[m[1]]:m[0]==="a"?A[m[1]]:N[m[1]]);if(ok)select(m[0],m[1]);}
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+{
+  "id": "v11",
+  "claim": "C3",
+  "title": "Dokładność pixel->world vs xView3 lat/lon (residuum w metrach)",
+  "status": "pass",
+  "substrate": [
+    "xView3"
+  ],
+  "tier": "public",
+  "metrics": {
+    "n_detections": 19224,
+    "n_scenes": 50,
+    "n_scenes_skipped_no_geo": 0,
+    "residual_m_p50": 0.0002,
+    "residual_m_p95": 0.0005,
+    "residual_m_max": 10.8754,
+    "residual_m_mean": 0.0572,
+    "crs": [
+      "EPSG:32627",
+      "EPSG:32631",
+      "EPSG:32632",
+      "EPSG:32633",
+      "EPSG:32732"
+    ],
+    "n_crs": 5,
+    "gsd_m": 10.0
+  },
+  "artifacts": [
+    "results/geo_accuracy.csv",
+    "results/geo_accuracy_by_scene.csv"
+  ],
+  "config": {
+    "gsd_m": 10.0,
+    "pass_gate": "p95 <= 1.5*gsd"
+  },
+  "notes": "pixel->WGS84 (SceneGeoModel.affine) vs publikowany detect_lat/lon dla 19224 detekcji z 50 scen: p50=0.00 m, p95=0.00 m, max=10.88 m (GSD=10 m). Residuum liczone w CRS sceny (UTM, metry).",
+  "timestamp": "2026-09-09T11:09:18.117190+00:00",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "app_rev": "6cf3028",
+    "app_fingerprint": "7ca623b59cdc3ee8:258",
+    "app_version": "1.4.0"
+  }
+}

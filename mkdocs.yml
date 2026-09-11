@@ -1,0 +1,248 @@
+site_name: GeoTile Label
+site_description: Dokumentacja użytkownika aplikacji GeoTile Label
+site_author: GeoTile Label Team
+# `site_url` jest tu CELOWO nieobecne, mimo ze bez niego `sitemap.xml` niesie doslowne
+# `Noneindex.html`. Ta konfiguracja buduje pomoc OFFLINE pakowana do instalatora, a
+# `site_url` wstawia do KAZDEJ strony `<link rel="canonical" href="https://...">`.
+# `scripts/validate-docs.ps1` odrzuca wtedy build ("External runtime assets were detected
+# in generated HTML") — i slusznie, bo pomoc pod F1 nie ma prawa odwolywac sie do sieci.
+# Wersja dla GitHub Pages ma wlasny plik: `mkdocs.web.yml` (INHERIT + `site_url`).
+#
+# `repo_url` jest nieobecne z pokrewnego powodu. Material renderuje wtedy komponent
+# `data-md-component="source"`, a ten odpytuje `api.github.com` o gwiazdki i forki —
+# czyli ta sama budowa dokumentacji, ktora jedzie w instalatorze jako pomoc pod F1,
+# zaczelaby przy kazdym otwarciu wychodzic do sieci. Sprawdzone: bez `repo_url`
+# komponentu nie ma. Odnosnik do repozytorium jest w README, gdzie nic nie kosztuje.
+
+docs_dir: docs
+site_dir: .docs-build/site
+use_directory_urls: false
+strict: true
+
+theme:
+  name: material
+  language: pl
+  custom_dir: docs_overrides
+  logo: assets/images/logo.png
+  favicon: assets/images/logo.png
+  font: false
+  features:
+    # Bez navigation.sections: dzialy sa zwijane i wciete, zamiast plaskiej listy
+    # z pogrubionymi naglowkami. navigation.indexes wpina strone przegladowa dzialu
+    # w jego naglowek, wiec nie dubluje sie ona jako osobna pozycja nizej.
+    - navigation.indexes
+    # Dzialy sa rozwiniete od razu; strzalki nadal pozwalaja je zwinac.
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: geotile-light
+      primary: deep-purple
+      accent: deep-purple
+      toggle:
+        icon: material/weather-night
+        name: Włącz ciemny motyw
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep-purple
+      accent: deep-purple
+      toggle:
+        icon: material/weather-sunny
+        name: Włącz jasny motyw
+
+plugins:
+  - search:
+      lang: en
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: pl
+          default: true
+          name: Polski
+          build: true
+        - locale: en
+          name: English
+          build: true
+          site_description: User documentation for GeoTile Label
+          copyright: GeoTile Label · AGPL-3.0
+          theme:
+            language: en
+          nav_translations:
+            Start: Home
+            Architektura: Architecture
+            Pierwsze kroki: Getting started
+            Instalacja: Installation
+            Pakiet treningowy GPU: GPU training pack
+            Szybki start analityka: Analyst quick start
+            Od sceny do datasetu: From scenes to a dataset
+            Dane wejściowe: Input data
+            Importuj paczki scen: Import scene packages
+            Piramidy i sidecary QGIS: QGIS overviews and sidecars
+            Produkty pochodne: Derived products
+            Lotnicze sceny NITF: Aerial NITF scenes
+            Projekty: Projects
+            Utwórz projekt: Create a project
+            Klasy: Classes
+            Relinkuj źródło: Relink a source
+            Backup i przenoszenie: Backup and transfer
+            Usuń projekt: Delete a project
+            Adnotowanie: Annotation
+            Siatka przeglądu: Review grid
+            Narzędzia AI: AI tools
+            Predykcja YOLO: YOLO prediction
+            Znajdź podobne: Find similar
+            Praca zespołowa: Teamwork
+            Role projektu: Project roles
+            Workflow analityka: Analyst workflow
+            Szybki start managera: Manager quick start
+            Datasety: Datasets
+            Katalog kafelków: Tile catalog
+            Zbuduj dataset: Build a dataset
+            Statystyki: Statistics
+            Zawartość: Contents
+            Audyt: Audit
+            Publikowanie wersji: Publish a version
+            Analiza datasetu: Dataset analysis
+            Trening modeli: Model training
+            Uruchom trening: Start training
+            Porównanie wyników: Compare results
+            Rejestr modeli: Model registry
+            Eksport: Export
+            GeoParquet w QGIS: GeoParquet in QGIS
+            Diagnostyka: Troubleshooting
+            Aplikacja nie startuje: Application does not start
+            Scena się nie otwiera: Scene does not open
+            Predykcja jest niedostępna: Prediction is unavailable
+            Import paczki nie przechodzi: Package import fails
+            Informacje referencyjne: Reference
+            Zadania w tle: Background jobs
+            Skróty klawiaturowe: Keyboard shortcuts
+            Domyślne produkty dostawców: Default vendor products
+            Statusy scen: Scene statuses
+            Rodzaje paczek wymiany: Exchange package types
+            Lokalizacje danych: Data locations
+            Architektury bazowe: Base architectures
+            Słownik pojęć: Glossary
+            Indeks komunikatów: Message index
+            Kontakt: Contact
+            Rozwój: Development
+  - privacy:
+      cache_dir: .docs-build/privacy-cache
+  - offline
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  # Bez tego skroty :material-...: trafiaja na strone jako goly tekst.
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+extra:
+  app_version: !ENV [GEOTILE_DOCS_VERSION, development]
+  generator: false
+  polyfills:
+    - assets/javascripts/iframe-worker-shim.js
+
+copyright: GeoTile Label · AGPL-3.0
+
+nav:
+  - Start: index.md
+  - Architektura: architecture/index.md
+  - Pierwsze kroki:
+      - getting-started/index.md
+      - Instalacja: getting-started/instalacja.md
+      - Pakiet treningowy GPU: getting-started/pakiet-gpu.md
+      - Szybki start analityka: getting-started/szybki-start-analityka.md
+      - Od sceny do datasetu: getting-started/od-sceny-do-datasetu.md
+  - Dane wejściowe:
+      - input-data/index.md
+      - Importuj paczki scen: input-data/importuj-paczki.md
+      - Piramidy i sidecary QGIS: input-data/piramidy-qgis.md
+      - Produkty pochodne: input-data/produkty-pochodne.md
+      - Lotnicze sceny NITF: input-data/nitf-lotnicze.md
+  - Projekty:
+      - projects/index.md
+      - Utwórz projekt: projects/utworz-projekt.md
+      - Klasy: projects/klasy.md
+      - Relinkuj źródło: projects/relinkuj-zrodlo.md
+      - Backup i przenoszenie: projects/backup.md
+      - Usuń projekt: projects/usun-projekt.md
+  - Adnotowanie:
+      - annotation/index.md
+      - Siatka przeglądu: annotation/siatka-przegladu.md
+  - Narzędzia AI:
+      - ai-assistance/index.md
+      - Predykcja YOLO: ai-assistance/predykcja.md
+      - SAM (klik i tekst): ai-assistance/sam.md
+      - Znajdź podobne: ai-assistance/znajdz-podobne.md
+  - Praca zespołowa:
+      - teamwork/index.md
+      - Role projektu: teamwork/role-projektu.md
+      - Workflow analityka: teamwork/workflow-analityka.md
+      - Szybki start managera: teamwork/szybki-start-managera.md
+  - Datasety:
+      - datasets/index.md
+      - Katalog kafelków: datasets/katalog-kafelkow.md
+      - Zbuduj dataset: datasets/zbuduj-dataset.md
+      - Statystyki: datasets/statystyki.md
+      - Zawartość: datasets/zawartosc.md
+      - Audyt: datasets/audyt.md
+      - Publikowanie wersji: datasets/publikowanie.md
+  - Analiza datasetu: datasets/analiza.md
+  - Trening modeli:
+      - training/index.md
+      - Uruchom trening: training/uruchom-trening.md
+      - Preflight: training/preflight.md
+      - Porównanie wyników: training/wyniki.md
+      - Rejestr modeli: training/rejestr-modeli.md
+  - Eksport:
+      - export/index.md
+      - GeoParquet w QGIS: export/geoparquet-qgis.md
+  - Diagnostyka:
+      - troubleshooting/index.md
+      - Aplikacja nie startuje: troubleshooting/aplikacja-nie-startuje.md
+      - Scena się nie otwiera: troubleshooting/scena-sie-nie-otwiera.md
+      - Predykcja jest niedostępna: troubleshooting/predykcja-niedostepna.md
+      - Import paczki nie przechodzi: troubleshooting/import-paczek.md
+  - Informacje referencyjne:
+      - reference/index.md
+      - Zadania w tle: reference/zadania-w-tle.md
+      - Skróty klawiaturowe: reference/skroty.md
+      - Domyślne produkty dostawców: reference/produkty-dostawcow.md
+      - Statusy scen: reference/statusy-scen.md
+      - Rodzaje paczek wymiany: reference/rodzaje-paczek.md
+      - Lokalizacje danych: reference/lokalizacje-danych.md
+      - Architektury bazowe: reference/architektury.md
+      - Słownik pojęć: reference/slownik.md
+      - Indeks komunikatów: reference/komunikaty.md
+      - Kontakt: reference/kontakt.md
+  - Rozwój: development.md

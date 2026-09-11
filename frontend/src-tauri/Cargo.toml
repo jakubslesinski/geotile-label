@@ -1,0 +1,42 @@
+[package]
+name = "geotile-label-desktop"
+version = "1.4.0"
+description = "GeoTile Label desktop application"
+authors = ["Jakub Slesinski <jakub.slesinski@wat.edu.pl>"]
+edition = "2021"
+
+[lib]
+name = "geotile_label_desktop_lib"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# UWAGA: "devtools" jest wlaczone tymczasowo, do diagnozy bialego okna pomocy.
+# Usunac przed wydaniem dla uzytkownikow - inaczej instalator wysyla narzedzia
+# deweloperskie razem z aplikacja.
+tauri = { version = "2", features = ["devtools"] }
+tauri-plugin-dialog = "2"
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+uuid = { version = "1", features = ["v4"] }
+zip = { version = "0.6", default-features = false, features = ["deflate"] }
+flate2 = "1"
+tar = "0.4"
+sysinfo = { version = "0.39", default-features = false, features = ["system"] }
+
+# Job Object: system ubija backend, gdy zginie proces aplikacji — takze przy crashu,
+# gdzie zaden kod sprzatajacy sie nie wykona. Wersja 0.59 jest juz w drzewie zaleznosci
+# (tranzytywnie przez tauri), wiec nie dokladamy nowego pobrania.
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = [
+    "Win32_Foundation",
+    "Win32_System_JobObjects",
+    # `CreateJobObjectW` przyjmuje SECURITY_ATTRIBUTES (Win32_Security), a
+    # JOBOBJECT_EXTENDED_LIMIT_INFORMATION zawiera IO_COUNTERS (Win32_System_Threading).
+    # Bez tych dwoch cech oba symbole sa wyciete przez `#[cfg]` i nie linkuja sie.
+    "Win32_Security",
+    "Win32_System_Threading",
+] }

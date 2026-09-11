@@ -1,0 +1,53 @@
+{
+  "id": "v12",
+  "claim": "C6",
+  "title": "Ocena stratyfikowana po metadanych (distance_from_shore, kąt padania)",
+  "status": "pass",
+  "substrate": [
+    "xView3"
+  ],
+  "tier": "public",
+  "metrics": {
+    "run_id": "20260824T193358510402Z_7f8bd0ce",
+    "task": "detect",
+    "conf": 0.1,
+    "tol_px": 20.0,
+    "device": "cpu",
+    "n_tiles_eval": 1086,
+    "n_gt_total": 7078,
+    "bins": [
+      "0-2km (brzeg)",
+      "2-10km (przybrzeże)",
+      "offshore (>10km)"
+    ],
+    "recall_by_bin": {
+      "0-2km (brzeg)": 0.1999,
+      "2-10km (przybrzeże)": 0.2505,
+      "offshore (>10km)": 0.2541
+    },
+    "n_gt_by_bin": {
+      "0-2km (brzeg)": 1526,
+      "2-10km (przybrzeże)": 2990,
+      "offshore (>10km)": 2562
+    },
+    "spread_pp": 5.42
+  },
+  "artifacts": [
+    "results/stratified_metrics.csv"
+  ],
+  "config": {
+    "project": "xView3",
+    "split": "val",
+    "conf": 0.1,
+    "tol_px": 20.0
+  },
+  "notes": "Recall stratyfikowany po distance_from_shore (xView3 val, 1086 kafli / 7078 obiektów, model 20260824T193358510402Z_7f8bd0ce @conf0.1): 0-2km (brzeg)=0.20 (n=1526), 2-10km (przybrzeże)=0.25 (n=2990), offshore (>10km)=0.25 (n=2562). Rozrzut recall między binami = 5.42 pp — metryka zmienia się z metadanymi. Ilustracja zdolności (małe dane: 50 scen val xView3), nie benchmark.",
+  "timestamp": "2026-09-09T11:10:38.226527+00:00",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "app_rev": "6cf3028",
+    "app_fingerprint": "7ca623b59cdc3ee8:258",
+    "app_version": "1.4.0"
+  }
+}

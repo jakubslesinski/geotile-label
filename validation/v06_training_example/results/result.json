@@ -1,0 +1,46 @@
+{
+  "id": "v06",
+  "claim": "C4",
+  "title": "Przykład treningu OBB (loss/mAP + confusion matrix)",
+  "status": "pass",
+  "substrate": [
+    "DOTA",
+    "FAIR1M"
+  ],
+  "tier": "public",
+  "metrics": {
+    "project": "DOTA",
+    "run_id": "20260824T221333305147Z_f1a0e194",
+    "task": "obb",
+    "base_model": "yolo11n-obb.pt",
+    "epochs": 50,
+    "n_epochs_logged": 50,
+    "n_classes": 18,
+    "best_map50": 0.64191,
+    "best_map5095": 0.47453,
+    "final_precision": 0.8196194695706541,
+    "final_recall": 0.6052906714103279,
+    "has_confusion": true
+  },
+  "artifacts": [
+    "results/metrics.csv",
+    "results/confusion_matrix.json",
+    "results/confusion_matrix.png"
+  ],
+  "config": {
+    "candidates": [
+      "DOTA",
+      "FAIR1M"
+    ],
+    "app_data_dir": "%APPDATA%\\GeoTileLabel\\data"
+  },
+  "notes": "Zamknięta pętla treningu w aplikacji: DOTA / 20260824T221333305147Z_f1a0e194 (task=obb, base=yolo11n-obb.pt, 50 epok). best mAP50=0.64191, mAP50-95=0.47453, klas=18; confusion matrix obecna=True.",
+  "timestamp": "2026-09-09T11:06:55.772470+00:00",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "app_rev": "6cf3028",
+    "app_fingerprint": "7ca623b59cdc3ee8:258",
+    "app_version": "1.4.0"
+  }
+}

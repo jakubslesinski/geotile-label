@@ -1,0 +1,123 @@
+:root {
+  --md-primary-fg-color: #7c4fe0;
+  --md-primary-fg-color--light: #936bea;
+  --md-primary-fg-color--dark: #6d3fd1;
+  --md-accent-fg-color: #7c4fe0;
+  --md-text-font: Inter, Arial, sans-serif;
+  --md-code-font: "Cascadia Code", Consolas, monospace;
+}
+
+[data-md-color-scheme="geotile-light"] {
+  --md-default-bg-color: #f5f5f6;
+  --md-default-fg-color: #202024;
+  --md-default-fg-color--light: #6f6f76;
+  --md-default-fg-color--lighter: #929298;
+  --md-default-fg-color--lightest: rgba(20, 20, 24, 0.1);
+  --md-code-bg-color: #ececef;
+  --md-typeset-a-color: #6d3fd1;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color: #111113;
+  --md-default-fg-color: #f5f5f6;
+  --md-default-fg-color--light: #a7a7ad;
+  --md-default-fg-color--lighter: #85858c;
+  --md-default-fg-color--lightest: rgba(255, 255, 255, 0.08);
+  --md-code-bg-color: #18181a;
+  --md-typeset-a-color: #c2a5ff;
+  --md-accent-fg-color: #ad86ff;
+}
+
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: #0c0c0d;
+}
+
+[data-md-color-scheme="slate"] .md-sidebar,
+[data-md-color-scheme="slate"] .md-nav--primary .md-nav__title {
+  background-color: #171719;
+}
+
+[data-md-color-scheme="slate"] .md-main__inner {
+  background-color: #1b1b1e;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 0.9rem;
+  padding: 0 1rem 1rem;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .admonition,
+[data-md-color-scheme="slate"] .md-typeset details {
+  background-color: #202023;
+  border-color: rgba(155, 108, 255, 0.45);
+}
+
+/* Logo nie jest kwadratowe (387x366), wiec wymuszanie rownych bokow je sciskalo.
+   Sterujemy wysokoscia, szerokosc dobiera sie sama. */
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 2.1rem;
+  width: auto;
+  object-fit: contain;
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.md-typeset .grid.cards > ul > li {
+  border-radius: 0.8rem;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li {
+  background-color: #202023;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li:hover {
+  background-color: #242428;
+  border-color: rgba(155, 108, 255, 0.65);
+}
+
+@media screen and (min-width: 76.25em) {
+  .md-main__inner {
+    max-width: 88rem;
+  }
+}
+
+/* --- Placeholdery materiałów wizualnych -----------------------------------
+   Tekst dokumentacji powstaje przed zrzutami, ale mkdocs --strict przerywa build
+   przy odwołaniu do nieistniejącego pliku. Dlatego oczekujące materiały wskazują
+   na realny plik _placeholder.svg, a ta klasa nadaje im wygląd, którego nie da się
+   pomylić z gotową ilustracją. Przed wydaniem validate-docs.ps1 -RequireAssets
+   odrzuca build, jeśli został choć jeden. */
+
+.md-typeset img.placeholder {
+  display: block;
+  width: 100%;
+  max-width: 44rem;
+  margin: 1.2rem auto 0.4rem;
+  border-radius: 0.5rem;
+  opacity: 0.85;
+}
+
+/* Alt-text pełni tu rolę briefu dla autora zrzutu, więc pokazujemy go pod ramką
+   zamiast chować w atrybucie. */
+.md-typeset img.placeholder + em,
+.md-typeset .placeholder-note {
+  display: block;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #7c5cc4;
+}
+
+[data-md-color-scheme="slate"] .md-typeset img.placeholder {
+  opacity: 0.7;
+}
+
+[data-md-color-scheme="slate"] .md-typeset img.placeholder + em,
+[data-md-color-scheme="slate"] .md-typeset .placeholder-note {
+  color: #b79cff;
+}

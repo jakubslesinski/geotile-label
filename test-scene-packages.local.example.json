@@ -1,0 +1,46 @@
+{
+  "sources": [
+    {
+      "provider": "iceye",
+      "root_path": "D:/DANE/Sample_Data/ICEYE",
+      "expected_packages": 1,
+      "expected_status": "ready",
+      "expected_product": "GRD"
+    },
+    {
+      "provider": "capella",
+      "root_path": "D:/DANE/Sample_Data/Capella",
+      "expected_packages": 1,
+      "expected_status": "ready",
+      "expected_product": "GEC"
+    },
+    {
+      "provider": "umbra",
+      "root_path": "D:/DANE/Sample_Data/Umbra",
+      "expected_packages": 1,
+      "expected_status": "ready",
+      "expected_product": "GEC"
+    },
+    {
+      "provider": "pleiades_neo",
+      "root_path": "D:/DANE/Sample_Data/PleiadesNeo",
+      "expected_packages": 1,
+      "expected_status": "ready",
+      "expected_product": "PMS-FS_RGB_ORTHO"
+    },
+    {
+      "provider": "worldview",
+      "root_path": "D:/DANE/Sample_Data/WorldView",
+      "expected_packages": 1,
+      "expected_status": "prepare_required",
+      "expected_product": "MUL+PAN"
+    },
+    {
+      "provider": "blacksky",
+      "root_path": "D:/DANE/Sample_Data/BlackSky",
+      "expected_packages": 1,
+      "expected_status": "ready",
+      "expected_product": "ORTHO_RGB"
+    }
+  ]
+}

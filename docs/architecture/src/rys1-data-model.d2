@@ -1,0 +1,92 @@
+# PLIK GENEROWANY — nie edytowac recznie.
+# Zrodlo tresci: docs/architecture/architecture-model.json
+# Generator:     scripts/generate-architecture-d2.py
+# Uklad rysunkow artykulu jest RECZNY i zyje w Figmie; ten plik sluzy recenzji tresci.
+
+# Rys. 1 — kanoniczny model geospatial datasetu (UML class)
+direction: down
+
+Scene: {
+  shape: class
+  "«canonical»": ""
+  "source_scene_uid": string
+  "format": "GeoTIFF·JP2·NITF·PNG·JPEG"
+  "SceneGeoModel": "affine | gcp_tps"
+  "manifest": "geometry/metadata/source_identity"
+  "gsd_m (optional)": string
+}
+
+SourceAnnotation: {
+  shape: class
+  "«canonical»": ""
+  "annotation_id": string
+  "geometry_scene_px": "AABB | OBB"
+  "spatial_geometry": "WGS84 (optional)"
+  "working_grid_uid": string
+  "class_label · provenance · author": string
+}
+
+TileAnnotation: {
+  shape: class
+  "«derived»": ""
+  "from SourceAnnotation → tile": string
+  "geometry_tile_px": string
+  "class_label": string
+}
+
+WorkingView: {
+  shape: class
+  "«derived»": ""
+  "working_grid_uid": string
+  "kind": "VRT | band selection | pansharpen"
+  "display asset": "project overview · full-res COG"
+  "regenerable derived view": string
+}
+
+TileDefinition: {
+  shape: class
+  "«derived · metadata-only»": ""
+  "tile_id": string
+  "window_px · footprint_wgs84 (affine|TPS)": string
+  "review_status": string
+}
+
+DatasetSample: {
+  shape: class
+  "«derived · materialized»": ""
+  "image": "8-bit RGB"
+  "labels": "YOLO / OBB"
+  "split": "train | val | test"
+}
+
+DatasetRun: {
+  shape: class
+  "«derived · immutable»": ""
+  "run_id (immutable)": string
+  "config": "size/overlap/split/seed/target_gsd"
+  "filters snapshot · used_tiles": string
+  "leakage audit · metadata sidecar": string
+}
+
+Export: {
+  shape: class
+  "«export»": ""
+  "ml": "YOLO / COCO / VOC"
+  "spatial": "GeoJSON / GeoPackage / GeoParquet"
+  "flags": "transform_model · approximate · orthorectified=false"
+}
+
+# relacje
+Scene -> WorkingView: "derives 1..*"
+Scene -> SourceAnnotation: "owns 0..*"
+SourceAnnotation -> TileAnnotation: "projected to 0..*"
+WorkingView -> TileDefinition: "tiles into 0..*"
+TileDefinition -> TileAnnotation: "locates"
+TileDefinition -> DatasetSample: "materialized (image)"
+TileAnnotation -> DatasetSample: "labels"
+DatasetSample -> DatasetRun: "included in 1..*"
+DatasetRun -> Export: "produces 1..*"
+
+# granice warstw (w d2 tylko komentarz — grupowanie robi uklad w Figmie)
+#   Canonical / annotation layer: Scene, SourceAnnotation, TileAnnotation
+#   Derived dataset layer: WorkingView, TileDefinition, DatasetSample, DatasetRun, Export

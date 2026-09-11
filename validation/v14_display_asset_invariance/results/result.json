@@ -1,0 +1,70 @@
+{
+  "id": "v14",
+  "claim": "C3",
+  "title": "Niezmienność adnotacji przy zmianie assetu wyświetlania",
+  "status": "pass",
+  "substrate": [
+    "fixture_jp2",
+    "provider:generic (realna scena JP2)"
+  ],
+  "tier": "mixed",
+  "metrics": {
+    "source_max_zoom": 5,
+    "available_native_zoom_state1": 4,
+    "available_native_zoom_state2": 5,
+    "display_asset_kind_state1": "preview_geotiff",
+    "display_asset_kind_state2": "cog",
+    "zoom_levels_differ": true,
+    "source_max_zoom_stable": true,
+    "tiles_compared": 120,
+    "distinct_code_patterns": 120,
+    "window_mismatches": 0,
+    "world_points": 7,
+    "world_coord_max_delta_m": 0.0,
+    "full_zoom_rejected_state1": true,
+    "full_zoom_served_state2": true,
+    "pyramid_phase_px_max": 0.0,
+    "real_scene_arm": {
+      "provider": "generic",
+      "scene_wh": [
+        60476,
+        43476
+      ],
+      "scene_px": 2629254576,
+      "transforms_identical": true,
+      "crs_identical": true,
+      "dimensions_identical": true,
+      "pixel_roundtrip_max_px": 7.451e-09,
+      "probe_pixels": 4,
+      "source_max_zoom": 8,
+      "source_max_zoom_stable": true,
+      "available_native_zoom_preview": 7,
+      "available_native_zoom_cog": 8,
+      "zoom_levels_differ": true,
+      "display_asset_kind_preview": "preview_geotiff",
+      "display_asset_kind_cog": "cog"
+    }
+  },
+  "artifacts": [
+    "results/tiles.csv"
+  ],
+  "config": {
+    "project_id": "v14-display-invariance",
+    "scene_id": "fixture-01",
+    "variant_id": "v14",
+    "width": 6000,
+    "height": 4000,
+    "block_px": 512,
+    "jp2_external_overview_min_pixels": "1000000",
+    "phase_sanity_bound_px": 1.0
+  },
+  "notes": "Fixture JP2 6000×4000, bloki 512 px, source_max_zoom=5. Stan 1 (preview_geotiff) serwuje do z=4, stan 2 (cog) do z=5 — poziom referencyjny bez zmian (True). Okno odczytu: 120 wspólnych kafli, 120 różnych układów kodów, niezgodnych 0. WGS84 dla 7 pikseli sceny — maks. różnica 0.000000000 m. 1× odrzucone w stanie 1: True; serwowane w stanie 2: True. Faza krawędzi między piramidami (raportowana, nie bramkująca): 0.000000 px. RAMIĘ B (realna scena JP2, reported-only): 60476×43476 (2.63 Gpx), piramida projektowa i opublikowany COG obecne jednocześnie. Transformacja, CRS i wymiary identyczne w źródle, podglądzie i COG-u (True/True/True); round-trip piksela 7.45e-09 px. Poziom referencyjny 8 bez zmian, dostępny zoom 7->8 (preview_geotiff->cog).",
+  "timestamp": "2026-09-09T11:10:54.239490+00:00",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "app_rev": "6cf3028",
+    "app_fingerprint": "7ca623b59cdc3ee8:258",
+    "app_version": "1.4.0"
+  }
+}

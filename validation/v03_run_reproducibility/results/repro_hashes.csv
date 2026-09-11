@@ -1,0 +1,11 @@
+run_idx,mode,input_hash,tiles_hash,split_hash
+0,random_tile,ebc860b5dadc7fbd,ec117b6e4b700f54,710071f8eca1b26a
+0,spatial_block_split,ebc860b5dadc7fbd,ec117b6e4b700f54,2dc69bbce019dffc
+1,random_tile,ebc860b5dadc7fbd,ec117b6e4b700f54,710071f8eca1b26a
+1,spatial_block_split,ebc860b5dadc7fbd,ec117b6e4b700f54,2dc69bbce019dffc
+2,random_tile,ebc860b5dadc7fbd,ec117b6e4b700f54,710071f8eca1b26a
+2,spatial_block_split,ebc860b5dadc7fbd,ec117b6e4b700f54,2dc69bbce019dffc
+3,random_tile,ebc860b5dadc7fbd,ec117b6e4b700f54,710071f8eca1b26a
+3,spatial_block_split,ebc860b5dadc7fbd,ec117b6e4b700f54,2dc69bbce019dffc
+4,random_tile,ebc860b5dadc7fbd,ec117b6e4b700f54,710071f8eca1b26a
+4,spatial_block_split,ebc860b5dadc7fbd,ec117b6e4b700f54,2dc69bbce019dffc

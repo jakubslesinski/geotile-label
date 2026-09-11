@@ -1,0 +1,57 @@
+{
+  "id": "v05",
+  "claim": "C2a",
+  "title": "Integralność ID scena->adnotacja->kafel->eksport",
+  "status": "pass",
+  "substrate": [
+    "FAIR1M",
+    "SAR_test"
+  ],
+  "tier": "mixed",
+  "metrics": {
+    "n_annotations": 2898,
+    "n_traced": 2898,
+    "n_lost": 0,
+    "n_orphan": 0,
+    "n_misassigned": 0,
+    "n_wrong_scene": 0,
+    "per_project": {
+      "FAIR1M": {
+        "n_annotations": 2693,
+        "n_traced": 2693,
+        "n_lost": 0,
+        "n_orphan": 0,
+        "n_misassigned": 0,
+        "n_wrong_scene": 0,
+        "n_scenes": 40
+      },
+      "SAR_test": {
+        "n_annotations": 205,
+        "n_traced": 205,
+        "n_lost": 0,
+        "n_orphan": 0,
+        "n_misassigned": 0,
+        "n_wrong_scene": 0,
+        "n_scenes": 1
+      }
+    }
+  },
+  "artifacts": [
+    "results/id_chain.csv"
+  ],
+  "config": {
+    "tile_size": 1024,
+    "buffer": 512,
+    "min_box_fraction": 0.3,
+    "fair1m_scenes": 40
+  },
+  "notes": "Łańcuch tożsamości na 2898 obiektach (FAIR1M:2693obj/40scen, SAR_test:205obj/1scen): odtworzone w eksporcie=2898, zgubione=0, orphan=0, źle przypisana klasa=0, zła scena=0. Prowenancja przez source_scene_uid.",
+  "timestamp": "2026-09-09T11:06:55.345155+00:00",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "app_rev": "6cf3028",
+    "app_fingerprint": "7ca623b59cdc3ee8:258",
+    "app_version": "1.4.0"
+  }
+}

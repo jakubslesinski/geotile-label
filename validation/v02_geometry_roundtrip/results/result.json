@@ -1,0 +1,42 @@
+{
+  "id": "v02",
+  "claim": "C3",
+  "title": "Round-trip pixel->world->pixel (affine) + wierność kształtu OBB",
+  "status": "pass",
+  "substrate": [
+    "FAIR1M",
+    "xView3",
+    "SAR_test"
+  ],
+  "tier": "mixed",
+  "metrics": {
+    "n_points": 6750,
+    "n_affine_scenes": 30,
+    "affine_p50_px": 3e-12,
+    "affine_p95_px": 1.35e-09,
+    "affine_max_px": 2.604e-09,
+    "affine_p95_m": 1e-09,
+    "n_obb": 2798,
+    "obb_min_iou": 1.0,
+    "obb_p50_iou": 1.0,
+    "obb_max_vertex_shift_px": 0.0
+  },
+  "artifacts": [
+    "results/roundtrip_residuals.csv",
+    "results/obb_shape_error.csv"
+  ],
+  "config": {
+    "grid": 15,
+    "affine_pass_px": 0.001,
+    "obb_pass_iou": 0.999
+  },
+  "notes": "Affine round-trip na 6750 punktach / 30 scenach: p95=1.35e-09 px (1.16e-09 m), max=2.60e-09 px. Kształt OBB na 2798 ramkach (SAR_test+FAIR1M): min IoU=1.000000, maks. przesunięcie wierzchołka=8.23e-09 px (brak skewu).",
+  "timestamp": "2026-09-09T11:06:35.797705+00:00",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "app_rev": "6cf3028",
+    "app_fingerprint": "7ca623b59cdc3ee8:258",
+    "app_version": "1.4.0"
+  }
+}

@@ -1,0 +1,82 @@
+# Środowisko backendu GeoTile Label.
+#
+# DLACZEGO CONDA, A NIE SAM PIP. Stos geoprzestrzenny (GDAL + rasterio + sterownik
+# JP2OpenJPEG) wymaga bibliotek natywnych, których koła pip na Windows nie dostarczają
+# w komplecie. Reszta zależności instaluje się pipem wewnątrz tego samego środowiska.
+#
+# WERSJE SĄ PRZYPIĘTE do stanu zweryfikowanego na działającej instalacji, a nie do
+# najnowszych dostępnych. To jest środowisko DEWELOPERSKIE: testy backendu i dowody
+# walidacyjne uruchamiane ze źródeł.
+#
+# TEN PLIK NIE STERUJE RUNTIME’EM PAKOWANYM DO INSTALATORA. Tamten buduje
+# `scripts/build-backend-env.ps1`, instalując najnowsze zgodne wersje, a jego faktyczny
+# skład zapisuje się przy każdej budowie do `runtime-lock.txt`. Jeżeli porównujesz
+# wyniki z opublikowanym wydaniem, źródłem prawdy jest `runtime-lock.txt`, nie ta lista.
+#
+# Utworzenie:
+#     conda env create -f environment.yml -p .\.venv-backend
+#     conda run -p .\.venv-backend python backend/main.py
+#
+# WARIANT GPU. Powyższy plik instaluje torcha na CPU (wariant „analyst": SAM, wyszukiwanie
+# wzorca, predykcja). Do treningu potrzebny jest wariant „studio" z kołem CUDA — zamień
+# indeks pipa na https://download.pytorch.org/whl/cu126 albo użyj
+# `scripts/build-backend-env.ps1 -Variant studio`, który buduje pakowalne środowisko
+# desktopowe.
+#
+# LICENCJE. `ultralytics` jest na AGPL-3.0 i jest zależnością rdzenia (trening, predykcja,
+# eksport YOLO, rejestr modeli). Ma to konsekwencje dla licencji całej aplikacji — patrz
+# THIRD_PARTY_NOTICES, gdy powstanie.
+
+name: geotile-label-backend
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.11.15
+
+  # --- stos geoprzestrzenny (natywny) ---
+  - gdal=3.12.3
+  - rasterio=1.4.4
+  # Sterownik JP2 instalowany OSOBNO: w jednej dużej transakcji conda potrafi zadowolić
+  # GDAL bez materializacji wtyczki. Celowo BEZ przypiętej wersji — musi podążać za
+  # wersją gdal, a osobny pin potrafi uczynić środowisko nierozwiązywalnym.
+  - libgdal-jp2openjpeg
+  - numpy=2.4.6
+  - pillow=12.3.0
+  - pyyaml=6.0.3
+  - pyarrow=25.0.0
+
+  - pip
+  - pip:
+      # --- API ---
+      - fastapi==0.140.7
+      - uvicorn[standard]==0.51.0
+      - python-multipart==0.0.32
+      - pydantic==2.13.4
+      - sse-starlette==3.4.6
+
+      # --- przetwarzanie obrazu i zasoby ---
+      - opencv-python-headless==5.0.0.93
+      - psutil==7.2.2
+
+      # --- stos ML (koło CPU; wariant GPU opisany w nagłówku) ---
+      - --index-url https://download.pytorch.org/whl/cpu
+      - --extra-index-url https://pypi.org/simple
+      - torch==2.13.0
+      - torchvision==0.28.0
+      - ultralytics==8.4.108
+
+      # --- SAM3: enkoder tekstu (fork CLIP) + backbone obrazowy ---
+      # Bez nich ultralytics próbuje doinstalować je z sieci w trakcie użycia, co offline
+      # kończy się zawisem albo mylącym „Network error".
+      - ftfy==6.3.1
+      - regex==2026.7.19
+      - timm==1.0.28
+      - git+https://github.com/ultralytics/CLIP.git
+
+# ZALEŻNOŚĆ OPCJONALNA, celowo poza listą:
+#   usearch>=2.23,<3 — akcelerator wyszukiwania najbliższych sąsiadów w analizie osadzeń.
+#   Importowany leniwie (`services/embedding_analysis.py`), więc jego brak nie blokuje
+#   aplikacji. W zweryfikowanym runtime NIE jest zainstalowany; dodaj go pipem, jeśli
+#   potrzebujesz przyspieszenia indeksu ANN.

@@ -1,0 +1,284 @@
+{
+  "_meta": {
+    "purpose": "Wspolrzedne i kolumny explorera. UKLAD JEST RECZNY - ten plik zmienia sie tylko wtedy, gdy ktos swiadomie przestawia wezly. Tresc pochodzi z architecture-model.json.",
+    "grid": "Widok modelu uzywa kolumn MX=30 / MRX=420 / MX3=810 (szerokosc 300) i wierszy MR.r1..r5 = 70/238/406/574/742.",
+    "cross_links": "Powiazania krzyzowe miedzy widokami (etap potoku -> encje / komponenty). To nawigacja, nie tresc modelu — utrzymywana recznie."
+  },
+  "architecture": {
+    "input": {
+      "layer": "ext",
+      "x": 40,
+      "y": 40,
+      "w": 250
+    },
+    "tauri": {
+      "layer": "ui",
+      "x": 300,
+      "y": 150,
+      "w": 250
+    },
+    "react": {
+      "layer": "ui",
+      "x": 620,
+      "y": 150,
+      "w": 320
+    },
+    "routers": {
+      "layer": "be",
+      "x": 300,
+      "y": 300,
+      "w": 320
+    },
+    "scene_res": {
+      "layer": "be",
+      "x": 40,
+      "y": 450,
+      "w": 250
+    },
+    "raster_res": {
+      "layer": "be",
+      "x": 300,
+      "y": 450,
+      "w": 250
+    },
+    "geo": {
+      "layer": "be",
+      "x": 560,
+      "y": 450,
+      "w": 250
+    },
+    "dsvc": {
+      "layer": "be",
+      "x": 820,
+      "y": 450,
+      "w": 270
+    },
+    "source_pkgs": {
+      "layer": "infra",
+      "x": 40,
+      "y": 620,
+      "w": 250
+    },
+    "raster": {
+      "layer": "infra",
+      "x": 300,
+      "y": 620,
+      "w": 250
+    },
+    "storage": {
+      "layer": "infra",
+      "x": 560,
+      "y": 620,
+      "w": 250
+    },
+    "ai": {
+      "layer": "infra",
+      "x": 820,
+      "y": 620,
+      "w": 270
+    },
+    "output": {
+      "layer": "ext",
+      "x": 1120,
+      "y": 620,
+      "w": 250
+    },
+    "jobs": {
+      "layer": "be",
+      "x": 1110,
+      "y": 450,
+      "w": 250
+    }
+  },
+  "model": {
+    "Scene": {
+      "layer": "canonical",
+      "col": "MX",
+      "row": "MR.r1"
+    },
+    "SourceAnnotation": {
+      "layer": "canonical",
+      "col": "MX",
+      "row": "MR.r2"
+    },
+    "TileAnnotation": {
+      "layer": "derived",
+      "col": "MX",
+      "row": "MR.r3"
+    },
+    "WorkingView": {
+      "layer": "derived",
+      "col": "MRX",
+      "row": "MR.r1"
+    },
+    "TileDefinition": {
+      "layer": "derived",
+      "col": "MRX",
+      "row": "MR.r2",
+      "sub": "metadata-only"
+    },
+    "DatasetSample": {
+      "layer": "derived",
+      "col": "MRX",
+      "row": "MR.r3",
+      "sub": "materialized"
+    },
+    "DatasetRun": {
+      "layer": "derived",
+      "col": "MRX",
+      "row": "MR.r4",
+      "sub": "immutable"
+    },
+    "Export": {
+      "layer": "export",
+      "col": "MRX",
+      "row": "MR.r5"
+    },
+    "Delivery": {
+      "layer": "source",
+      "col": "MX3",
+      "row": "MR.r1"
+    },
+    "Acquisition": {
+      "layer": "source",
+      "col": "MX3",
+      "row": "MR.r2"
+    },
+    "Product": {
+      "layer": "source",
+      "col": "MX3",
+      "row": "MR.r3"
+    },
+    "Asset": {
+      "layer": "source",
+      "col": "MX3",
+      "row": "MR.r4"
+    }
+  },
+  "grid_constants": {
+    "MX": 30,
+    "MRX": 420,
+    "MX3": 810,
+    "MW": 300
+  },
+  "grid_rows": {
+    "r1": 70,
+    "r2": 238,
+    "r3": 406,
+    "r4": 574,
+    "r5": 742
+  },
+  "cross_links": {
+    "P2E": {
+      "sources": [
+        "Scene",
+        "Delivery",
+        "Acquisition",
+        "Product",
+        "Asset"
+      ],
+      "import": [
+        "WorkingView",
+        "Scene",
+        "Product",
+        "Asset"
+      ],
+      "canonical": [
+        "Scene",
+        "SourceAnnotation",
+        "WorkingView"
+      ],
+      "annotation": [
+        "SourceAnnotation",
+        "TileAnnotation"
+      ],
+      "generation": [
+        "TileDefinition",
+        "TileAnnotation",
+        "DatasetSample",
+        "DatasetRun"
+      ],
+      "training": [
+        "DatasetRun",
+        "DatasetSample"
+      ],
+      "exports": [
+        "Export"
+      ]
+    },
+    "P2A": {
+      "sources": [
+        "input",
+        "source_pkgs"
+      ],
+      "import": [
+        "scene_res",
+        "raster_res",
+        "raster",
+        "jobs"
+      ],
+      "canonical": [
+        "geo",
+        "storage"
+      ],
+      "annotation": [
+        "react",
+        "routers"
+      ],
+      "generation": [
+        "dsvc",
+        "storage"
+      ],
+      "training": [
+        "ai",
+        "dsvc"
+      ],
+      "exports": [
+        "dsvc",
+        "output"
+      ]
+    },
+    "A2E": {
+      "react": [
+        "SourceAnnotation"
+      ],
+      "scene_res": [
+        "Scene",
+        "WorkingView",
+        "Delivery",
+        "Product",
+        "Asset"
+      ],
+      "raster_res": [
+        "WorkingView"
+      ],
+      "geo": [
+        "Scene"
+      ],
+      "dsvc": [
+        "TileDefinition",
+        "DatasetSample",
+        "DatasetRun",
+        "Export"
+      ],
+      "source_pkgs": [
+        "Scene"
+      ],
+      "storage": [
+        "Scene",
+        "SourceAnnotation",
+        "TileDefinition",
+        "DatasetRun"
+      ],
+      "ai": [
+        "DatasetRun"
+      ],
+      "output": [
+        "Export"
+      ],
+      "jobs": [
+        "WorkingView"
+      ]
+    }
+  }
+}
