@@ -272,6 +272,6 @@ If you use GeoTile Label in your research, please cite it. GitHub renders the me
 
 ## Contact
 
-Jakub Ślesiński - [jakub.slesinski@wat.edu.pl](mailto:jakub.slesinski@wat.edu.pl)
-Department of Imagery Intelligence, Faculty of Civil Engineering and Geodesy,
-Military University of Technology
+- Jakub Ślesiński - [jakub.slesinski@wat.edu.pl](mailto:jakub.slesinski@wat.edu.pl)
+- Department of Imagery Intelligence, Faculty of Civil Engineering and Geodesy,
+- Military University of Technology
