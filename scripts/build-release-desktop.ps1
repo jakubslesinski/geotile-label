@@ -168,7 +168,9 @@ foreach ($path in @($installerTarget, $readmeTarget, $releaseManifestPath)) {
     $hash = Get-FileHash $path -Algorithm SHA256
     $checksumLines += "$($hash.Hash)  $([IO.Path]::GetFileName($path))"
 }
-$checksumLines | Set-Content -Path $checksumPath -Encoding UTF8
+# Bez BOM: `Set-Content -Encoding UTF8` w PowerShellu 5.1 dodaje znacznik,
+# przez ktory `sha256sum -c` odrzuca pierwsza linie pliku sum.
+Write-Utf8NoBom $checksumPath (($checksumLines -join "`n") + "`n")
 
 Write-Host ""
 Write-Host "Desktop release prepared:"
