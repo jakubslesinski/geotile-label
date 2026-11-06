@@ -1,6 +1,6 @@
 # importers/ — benchmark → projekt GeoTile Label
 
-Cienkie importery zamieniające benchmarki z `E:\Datasets` na **kanoniczne projekty**
+Cienkie importery zamieniające benchmarki z `data/datasets` na **kanoniczne projekty**
 GeoTile Label (referencja do rastra + manifest geo + adnotacje `polygon_scene_px`).
 Plan i mapowanie pól: [`../BENCHMARK_IMPORT_PLAN.md`](../BENCHMARK_IMPORT_PLAN.md).
 
@@ -28,14 +28,14 @@ automatycznie z prefiksu conda (patrz memory `backend-tests-proj-env`).
 ```powershell
 # test na 3 scenach
 & "$env:APPDATA\GeoTileLabel\runtime\backend-env-cuda\python.exe" `
-    importers/import_fair1m.py --limit 3 --out E:\GeoTileLabel_data\benchmark_projects
+    importers/import_fair1m.py --limit 3 --out data/benchmark_projects
 
 # pełny import
 & "$env:APPDATA\GeoTileLabel\runtime\backend-env-cuda\python.exe" `
-    importers/import_fair1m.py --out E:\GeoTileLabel_data\benchmark_projects
+    importers/import_fair1m.py --out data/benchmark_projects
 ```
 
-Argumenty: `--fair1m-root` (dom. `E:\Datasets\FAIR1M`), `--out` (project_location),
+Argumenty: `--fair1m-root` (dom. `data/datasets/FAIR1M`), `--out` (project_location),
 `--backend` (dom. `<repozytorium>\backend`), `--name`, `--limit`, `--author`.
 
 ### Zweryfikowane (smoke, `--limit 3`)
@@ -72,13 +72,13 @@ Oryginalny podział DOTA zapisany w sidecarze projektu `benchmark_import.json` (
 ```powershell
 # test 2 sceny na split (train+val)
 & "$env:APPDATA\GeoTileLabel\runtime\backend-env-cuda\python.exe" `
-    importers/import_dota.py --limit 2 --out E:\GeoTileLabel_data\benchmark_projects
+    importers/import_dota.py --limit 2 --out data/benchmark_projects
 # pełny import (train+val, version2.0)
 & "$env:APPDATA\GeoTileLabel\runtime\backend-env-cuda\python.exe" `
-    importers/import_dota.py --out E:\GeoTileLabel_data\benchmark_projects
+    importers/import_dota.py --out data/benchmark_projects
 ```
 
-Argumenty: `--dota-root` (dom. `E:\Datasets\DOTA\dota-v2`), `--splits` (dom. `train,val`),
+Argumenty: `--dota-root` (dom. `data/datasets/DOTA`), `--splits` (dom. `train,val`),
 `--version` (dom. `version2.0`), `--limit` (per split), `--out`, `--backend`, `--name`, `--author`.
 
 **Zweryfikowane** (`--limit 2`): 18 klas (DOTA v2.0), 4 sceny (2 train + 2 val), 525 anotacji,
@@ -111,10 +111,10 @@ non_fishing_vessel / vessel / non_vessel / unknown.
 ```powershell
 # test 1 scena (validation — mniejszy split)
 & "$env:APPDATA\GeoTileLabel\runtime\backend-env-cuda\python.exe" `
-    importers/import_xview3.py --splits validation --limit 1 --out E:\GeoTileLabel_data\benchmark_projects
+    importers/import_xview3.py --splits validation --limit 1 --out data/benchmark_projects
 ```
 
-Argumenty: `--xview3-root` (dom. `E:\Datasets\xView3`), `--splits` (dom. `train,validation`),
+Argumenty: `--xview3-root` (dom. `data/datasets/xView3`), `--splits` (dom. `train,validation`),
 `--limit` (per split), `--out`, `--backend`, `--name`, `--author`.
 
 **Uwaga wydajność:** prowenansja hashuje pełne VV_dB (~1,4 GB/scenę) — pełny import całego
@@ -135,16 +135,16 @@ tests/test_diorr_parse.py
 
 JPEG 800×800 **bez geo** → pixel-frame; `robndbox` daje 4 jawne rogi → wprost `polygon_scene_px`
 (geometria z `fair1m.geometry`); obiekty HBB (`bndbox`) → `geometry_type="bbox"`. 20 klas z
-`YOLODIOR-R/classes.txt` (kanoniczna kolejność) lub zebrane z XML. Splity z `ImageSets/Main`,
+`DIOR-R/classes.txt` (kanoniczna kolejność) lub zebrane z XML. Splity z `ImageSets/Main`,
 oryginalny podział w sidecarze `benchmark_import.json`; `difficult` zachowane.
 
 ```powershell
 & "$env:APPDATA\GeoTileLabel\runtime\backend-env-cuda\python.exe" `
-    importers/import_diorr.py --limit 3 --out E:\GeoTileLabel_data\benchmark_projects
+    importers/import_diorr.py --limit 3 --out data/benchmark_projects
 ```
 
-Argumenty: `--diorr-root` (dom. `E:\Datasets\DIOR-R\DIOR-R`), `--classes-file`
-(dom. `…\YOLODIOR-R\classes.txt`), `--splits` (dom. `train,val`; też `test`), `--limit`, `--out`, `--backend`.
+Argumenty: `--diorr-root` (dom. `data/datasets/DIOR-R`), `--classes-file`
+(dom. `data/datasets/DIOR-R/classes.txt`), `--splits` (dom. `train,val`; też `test`), `--limit`, `--out`, `--backend`.
 
 **Zweryfikowane** (`--limit 3`): 20 klas, 6 scen (3 train + 3 val), 14 anotacji, 0 pominięć;
 manifest `EO/NO_GEO`, `polygon_scene_px` = rogi robndbox (bezstratnie), `class_id` z classes.txt.
