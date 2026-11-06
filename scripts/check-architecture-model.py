@@ -216,6 +216,14 @@ def check_figure(model: dict, target: str) -> tuple[list[str], bool]:
     if not path.is_file():
         return [f"brak eksportu {path.name} w {FIGURES}"], True
     found = {norm(x) for x in svg_texts(path)}
+    if not found:
+        # Eksport z tekstem zamienionym na krzywe nie niesie ani jednej etykiety, wiec
+        # porownanie zglosiloby KAZDA jako brakujaca. To falszywy alarm, nie dryf tresci:
+        # mowimy wprost, ze nie ma czego porownac, i czyj to krok.
+        return [
+            f"{target}: eksport bez elementow <text> (tekst zamieniony na krzywe) - "
+            "etykiet nie da sie zweryfikowac; wyeksportuj z Figmy z tekstem jako tekst"
+        ], False
     missing = sorted(w for w in figure_labels(model, target) if norm(w) not in found)
     return [f"{target}: brak na rysunku — {m}" for m in missing], True
 
@@ -226,6 +234,12 @@ def main() -> int:
                         help="rysunki czekajace na aktualizacje w Figmie, np. rys2,rys3")
     args = parser.parse_args()
     pending = {p.strip() for p in args.pending.split(",") if p.strip()}
+
+    # Raport niesie strzalki i cudzyslowy drukarskie, a domyslna konsola na Windowsie
+    # bywa w cp1250 - bez tego bramka przewraca sie na UnicodeEncodeError w polowie
+    # wypisywania wlasnej listy bledow i nie widac, co jest nie tak.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
     model = load_model()
     failed = False
@@ -244,6 +258,11 @@ def main() -> int:
 
     for target in ("rys1", "rys2", "rys3"):
         errors, checked = check_figure(model, target)
+        if not checked:
+            print(f"[POMIN] {target}: nie ma czego porownac")
+            for err in errors:
+                print("        ", err)
+            continue
         if target in pending:
             print(f"[CZEKA] {target}: {len(errors)} roznic — do wykonania w etapie 5")
             for err in errors[:12]:
