@@ -16,6 +16,7 @@ $packagePath = Join-Path $RepoRoot "frontend\package.json"
 $packageLockPath = Join-Path $RepoRoot "frontend\package-lock.json"
 $cargoTomlPath = Join-Path $RepoRoot "frontend\src-tauri\Cargo.toml"
 $tauriConfigPath = Join-Path $RepoRoot "frontend\src-tauri\tauri.conf.json"
+$citationPath = Join-Path $RepoRoot "CITATION.cff"
 
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
     throw "node was not found in PATH. Node.js is required to update package JSON files."
@@ -74,5 +75,17 @@ try {
 $cargoToml = Get-Content $cargoTomlPath -Raw -Encoding UTF8
 $cargoToml = $cargoToml -replace '(?m)^version = "[^"]+"', "version = `"$Version`""
 Write-Utf8NoBom $cargoTomlPath $cargoToml
+
+# CITATION.cff tez niesie wersje. Pomijany, rozjezdzal sie z reszta przy kazdym wydaniu,
+# a to z niego czytaja Zenodo i Zotero - czyli to, co zobaczy czytelnik artykulu.
+# UTF-8 po obu stronach, bo w `authors` sa polskie znaki (jak w Cargo.toml powyzej).
+if (Test-Path $citationPath) {
+    $citation = Get-Content $citationPath -Raw -Encoding UTF8
+    $updated = $citation -replace '(?m)^version: .+$', "version: $Version"
+    if ($updated -eq $citation) {
+        throw "CITATION.cff has no 'version:' line to update - check the file."
+    }
+    Write-Utf8NoBom $citationPath $updated
+}
 
 Write-Host "GeoTile Label version set to $Version"
