@@ -241,6 +241,11 @@ import that fails - is covered by the **Troubleshooting** section of the documen
 
 ## Development
 
+Source code lives in `backend/` (FastAPI services and the domain logic), `frontend/src/`
+(React user interface), `frontend/src-tauri/` (the Rust desktop shell), `importers/`
+(benchmark-to-project importers), `scripts/` (build, smoke and validation tooling) and
+`validation/` (the reproducible evidence behind the published results).
+
 **[Development guide](https://jakubslesinski.github.io/geotile-label/en/development.html)**
 - requirements, running the backend and frontend, the checks, the architecture drift gate
 and the release build. It is part of the documentation site and ships in the offline help.
