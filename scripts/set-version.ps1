@@ -17,6 +17,7 @@ $packageLockPath = Join-Path $RepoRoot "frontend\package-lock.json"
 $cargoTomlPath = Join-Path $RepoRoot "frontend\src-tauri\Cargo.toml"
 $tauriConfigPath = Join-Path $RepoRoot "frontend\src-tauri\tauri.conf.json"
 $citationPath = Join-Path $RepoRoot "CITATION.cff"
+$readmePath = Join-Path $RepoRoot "README.md"
 
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
     throw "node was not found in PATH. Node.js is required to update package JSON files."
@@ -81,11 +82,20 @@ Write-Utf8NoBom $cargoTomlPath $cargoToml
 # UTF-8 po obu stronach, bo w `authors` sa polskie znaki (jak w Cargo.toml powyzej).
 if (Test-Path $citationPath) {
     $citation = Get-Content $citationPath -Raw -Encoding UTF8
-    $updated = $citation -replace '(?m)^version: .+$', "version: $Version"
-    if ($updated -eq $citation) {
+    # Brak linii `version:` to blad pliku. Linia juz z ta wersja to normalny stan przy
+    # ponownym uruchomieniu, wiec sprawdzamy obecnosc, a nie to, czy tresc sie zmienila.
+    if ($citation -notmatch '(?m)^version: ') {
         throw "CITATION.cff has no 'version:' line to update - check the file."
     }
-    Write-Utf8NoBom $citationPath $updated
+    Write-Utf8NoBom $citationPath ($citation -replace '(?m)^version: .+$', "version: $Version")
+}
+
+# Badge wersji w README to kolejne miejsce, ktore samo sie nie aktualizuje, a widac je
+# jako pierwsze na stronie repozytorium.
+if (Test-Path $readmePath) {
+    $readme = Get-Content $readmePath -Raw -Encoding UTF8
+    $updated = $readme -replace 'badge/version-[0-9][^-]*-success', "badge/version-$Version-success"
+    if ($updated -ne $readme) { Write-Utf8NoBom $readmePath $updated }
 }
 
 Write-Host "GeoTile Label version set to $Version"

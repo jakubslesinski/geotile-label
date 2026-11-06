@@ -2,7 +2,8 @@
 
 <img src="docs/assets/images/repository-hero.png" alt="GeoTile Label - label imagery, build defensible datasets. Oriented boxes drawn on a SAR scene in the labeling view.">
 
-[![Version](https://img.shields.io/badge/version-1.4.0-success)](../../releases)
+[![Version](https://img.shields.io/badge/version-1.4.1-success)](../../releases)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24015061.svg)](https://doi.org/10.5281/zenodo.24015061)
 [![Built with](https://img.shields.io/badge/built%20with-Tauri%20%2B%20React%20%2B%20FastAPI-6E56CF)](#architecture)
 
 </div>

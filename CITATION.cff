@@ -36,11 +36,14 @@ authors:
     affiliation: Department of Imagery Intelligence, Faculty of Civil Engineering and Geodesy, Military University of Technology
 
 repository-code: https://github.com/jakubslesinski/geotile-label
-# date-released: 2026-09-14
-# identifiers:
-#   - type: doi
-#     value: 10.5281/zenodo.0000000
-#     description: Archived release of this version
+date-released: 2026-11-06
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.24015061
+    description: Concept DOI, always resolves to the latest archived release
+  - type: doi
+    value: 10.5281/zenodo.24015062
+    description: Archived release of version 1.4.1
 
 # preferred-citation:
 #   type: article
