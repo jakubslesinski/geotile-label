@@ -21,7 +21,7 @@ METHOD
     `source_scene_uid` z manifestu potwierdza pochodzenie sceny (prowenancja).
 
 INPUTS
-    - zaimportowany projekt FAIR1M (../importers) + fixture SAR_test (../geotile-label/data)
+    - zaimportowany projekt FAIR1M (importers/) + fixture SAR_test (poza repozytorium)
     - propagacja + atrybuty kafla z backendu aplikacji
 
 OUTPUTS
