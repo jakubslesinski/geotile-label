@@ -51,6 +51,20 @@ exports are derived products: they carry the settings they were built with, and 
 regenerated with different ones without touching a single annotation. A dataset in GeoTile
 Label is a version, not a folder that drifts.
 
+<div align="center">
+<img src="docs/assets/images/annotation-persistence-and-provenance.svg" alt="One annotation end to end: the source-scene chip with its SAR acquisition metadata, the canonical record stored in scene pixel coordinates, the attributes recomputed from it in pixels and in metres, and the project files that hold each part">
+</div>
+
+The same holds for a single object. What is stored is the geometry in scene pixel
+coordinates, the class and the front vector; the centroid, the axes, the area in square
+metres and the orientation relative to geographic north are recomputed from that geometry
+and the scene georeferencing whenever they are needed. Change how the image is displayed or
+tiled and none of it moves, because none of it was ever written down as the answer.
+
+<div align="center">
+<sub>SAR imagery: <a href="https://registry.opendata.aws/iceye-opendata/">ICEYE SAR Open Data</a>, &copy; ICEYE, licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</sub>
+</div>
+
 ## Installation
 
 Download the installer from [Releases](../../releases) and run it.
