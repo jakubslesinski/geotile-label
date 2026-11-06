@@ -22,19 +22,21 @@ to wait for a training result.
 !!! info "DINO weights are required"
 
     The analysis needs DINO weights in the models directory (`models/dino`, for example
-    `dinov2_vits14_reg4_pretrain.pth`). The model code ships with the application - you
-    supply only the weights file. Without the weights the button reports a readable reason
-    instead of quietly computing something meaningless. Everything runs **offline**. It is
-    faster on a GPU, but a CPU is enough.
+    `dinov2_vits14_reg4_pretrain.pth`). The DINOv2 model code ships with the application -
+    you supply only the weights file. Without the weights the button reports a readable
+    reason instead of quietly computing something meaningless. Everything runs **offline**.
+    It is faster on a GPU, but a CPU is enough.
 
-!!! warning "The DINOv3 code is not under an open-source license"
+!!! warning "DINOv3 takes one extra step"
 
-    Two backbone repositories are bundled: `dinov2` (Apache-2.0) and `dinov3`. The latter is
-    covered by the **DINOv3 License**, which permits redistribution but binds every recipient
-    and prohibits use for **military or warfare purposes, espionage, nuclear applications and
-    activities subject to ITAR**. The full text is installed next to the code. If those terms
-    do not suit your deployment, the DINOv2 variants cover the same analysis, only without
-    DINOv3-SAT.
+    Only the `dinov2` backbone code (Apache-2.0) is bundled. `dinov3` is not: the **DINOv3
+    License** is not OSI-approved, it binds every recipient and prohibits use for **military
+    or warfare purposes, espionage, nuclear applications and activities subject to ITAR**, so
+    accepting it is left to you rather than inherited from the installer. To work with DINOv3
+    weights, clone `https://github.com/facebookresearch/dinov3` into
+    `%APPDATA%\GeoTileLabel\data\models\dino\dinov3_repo`; no restart is needed. Until
+    then the analysis runs on the DINOv2 variants, which cover the same work without
+    DINOv3-SAT, and the application says plainly when it is the DINOv3 code that is missing.
 
 The analysis runs **in the background** - a progress bar shows the stages (loading the
 backbone → embeddings → similarity → duplicates → class examples). The result is stored,

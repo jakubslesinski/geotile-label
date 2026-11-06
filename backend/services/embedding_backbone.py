@@ -64,7 +64,10 @@ def _dino_repo_dir(family: str) -> Path | None:
         candidate = base / f"{family}_repo"
         if candidate.is_dir():
             return candidate
-    import torch
+    try:
+        import torch
+    except ImportError:
+        return None  # bez torcha nie ma ani cache'u hubu, ani po co go szukać
 
     cache = Path(torch.hub.get_dir()) / f"facebookresearch_{family}_main"
     return cache if cache.is_dir() else None
@@ -159,21 +162,75 @@ def _allow_download() -> bool:
     return os.environ.get("GEOTILE_DINO_ALLOW_DOWNLOAD", "0").strip().lower() in ("1", "true", "yes")
 
 
+def _torch_installed() -> bool:
+    """Czy w runtime jest torch. Osobna funkcja, żeby bramkę dało się testować bez niego."""
+    import importlib.util
+
+    return importlib.util.find_spec("torch") is not None
+
+
+def dino_repo_available(family: str) -> bool:
+    """Czy kod repo backbone'u danej rodziny (`dinov2`/`dinov3`) leży lokalnie."""
+    return _dino_repo_dir(family) is not None
+
+
+# Czego brakuje i co z tym zrobić, osobno dla każdej rodziny: kod DINOv2 jedzie
+# z aplikacją, kodu DINOv3 nie dystrybuujemy, bo jego licencja nie jest otwarta
+# (patrz THIRD_PARTY_NOTICES.md). Dla użytkownika to dwie różne czynności.
+_REPO_HINT = {
+    "dinov2": (
+        "brak kodu repo DINOv2 w MODELS_ROOT/dino/dinov2_repo. Zwykle jedzie on "
+        "z aplikacją; jeśli go nie ma, sklonuj tam "
+        "https://github.com/facebookresearch/dinov2 albo ustaw "
+        "GEOTILE_DINO_ALLOW_DOWNLOAD=1."
+    ),
+    "dinov3": (
+        "wagi są na miejscu, ale brakuje kodu repo DINOv3 w "
+        "MODELS_ROOT/dino/dinov3_repo. Nie jest on dystrybuowany z aplikacją, bo "
+        "licencja DINOv3 nie jest otwarta; sklonuj tam "
+        "https://github.com/facebookresearch/dinov3. Wagi DINOv2 działają bez tego kroku."
+    ),
+}
+
+
+def dino_unavailable_reason(
+    preferred: str | None = None, models_dir: str | Path | None = None
+) -> str | None:
+    """Powód, dla którego DINO nie ruszy **offline**, albo `None` gdy ruszy.
+
+    Rozróżnia brak **wag** od braku **kodu backbone'u**: od wydania bez repo DINOv3 to
+    dwa różne powody i dwie różne czynności użytkownika, a jeden komunikat „brak wag"
+    byłby dla kogoś z wagami na dysku zwyczajnie nieprawdziwy.
+    """
+    if not _torch_installed():
+        return "Backbone DINO niedostępny - w runtime backendu nie ma pakietu torch."
+    checkpoint = resolve_dino_checkpoint(preferred, models_dir)
+    if checkpoint is None:
+        return (
+            "Backbone DINO niedostępny - brak wag w MODELS_ROOT/dino "
+            "(np. dinov2_vits14_reg4_pretrain.pth)."
+        )
+    family = _family_of(checkpoint.name)
+    if family is None:
+        return f"Backbone DINO niedostępny - nierozpoznany checkpoint: {checkpoint.name}."
+    if dino_repo_available(family):
+        return None
+    # torch.hub ratuje tylko DINOv2. Dla DINOv3 takiej ścieżki nie ma (jego hubconf ciągnie
+    # torchmetrics i pada), więc `_build_dinov3_backbone` wymaga kodu lokalnie — flaga
+    # pobierania mu nie pomoże i bramka nie może na jej podstawie przepuścić dalej.
+    if family == "dinov2" and _allow_download():
+        return None
+    return "Backbone DINO niedostępny - " + _REPO_HINT[family]
+
+
 def dino_runtime_available(
     preferred: str | None = None, models_dir: str | Path | None = None
 ) -> bool:
     """Czy DINO ruszy **offline**: torch + rozpoznany checkpoint + **kod repo lokalnie**
-    (bundlowane `MODELS_ROOT/dino/<family>_repo` albo cache torch.hub). Bez kodu repo backbone
-    nie zbuduje się bez sieci — więc bramka jest tu, nie dopiero przy próbie użycia."""
-    import importlib.util
-
-    checkpoint = resolve_dino_checkpoint(preferred, models_dir)
-    if checkpoint is None or importlib.util.find_spec("torch") is None:
-        return False
-    family = _family_of(checkpoint.name)
-    if family is None:
-        return False
-    return _dino_repo_dir(family) is not None or _allow_download()
+    (`MODELS_ROOT/dino/<family>_repo`, kopia z aplikacji albo cache torch.hub). Bez kodu repo
+    backbone nie zbuduje się bez sieci — więc bramka jest tu, nie dopiero przy próbie
+    użycia."""
+    return dino_unavailable_reason(preferred, models_dir) is None
 
 
 class DinoEmbedder:

@@ -81,7 +81,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\build-backend-env.ps1
 
 # 2. Optional: the DINO backbone code, if you want Dataset analysis in the installer.
 #    Not in this repository - you fetch it, and accept its licenses, yourself.
-powershell -ExecutionPolicy Bypass -File .\scripts\fetch-dino-repos.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\fetch-dino-repos.ps1 -Only dinov2
 
 # 3. Frontend dependencies.
 cd frontend
@@ -93,8 +93,10 @@ npm run desktop:build
 
 Step 2 is optional and deliberately not automatic. Without it the build prints a warning
 and produces an installer in which **Dataset analysis does not work at all** - the
-application never downloads model code by itself, which is what keeps it offline. The
-script fetches both backbones; see [License](#license) before shipping the DINOv3 one.
+application never downloads model code by itself, which is what keeps it offline. `-Only
+dinov2` is what the published installer is built with. Dropping the flag fetches DINOv3 as
+well, and that changes the terms of what you then distribute - read
+[License](#license) first.
 
 Step 1 is not optional and not obvious: `tauri.conf.json` declares the runtime archive as a
 bundled resource, and a resource glob that matches nothing aborts the Tauri build script with
@@ -246,24 +248,31 @@ those capabilities out of it. Third-party components and their licenses are inve
 
 Be aware that AGPL-3.0 obligations extend to derived works.
 
-### One bundled component is not under an open-source license
+### DINOv3 is supported but deliberately not bundled
 
-**Dataset analysis** uses the DINO backbone architecture, and the installer bundles the code
-of both `facebookresearch/dinov2` (Apache-2.0) and `facebookresearch/dinov3` so the feature
-works offline. The model weights are not shipped; you supply them.
+**Dataset analysis** and **Find similar** use a frozen DINO backbone. The installer bundles
+the code of `facebookresearch/dinov2` (Apache-2.0) and nothing else. Model weights are never
+shipped; you supply them.
 
-`dinov3` is covered by the **DINOv3 License**, which is not OSI-approved. It permits
-royalty-free redistribution, but it travels with the code and binds every recipient, and it
-prohibits use for **military or warfare purposes, espionage, nuclear applications and
-activities subject to ITAR**. The full text is installed alongside the code, and the
-obligation is set out at the top of
-[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+`facebookresearch/dinov3` is not in the installer, even though the application loads DINOv3
+weights. The **DINOv3 License** is not OSI-approved: it travels with the code, binds every
+recipient, and prohibits use for **military or warfare purposes, espionage, nuclear
+applications and activities subject to ITAR**. Shipping that code would have carved an
+exception out of the AGPL-3.0 statement above, so this release does not ship it and the
+statement holds for every bundled component without exception.
 
-So the AGPL-3.0 statement above describes the application and every other bundled component,
-but not that one. If those terms do not suit your deployment, remove
-`data/models/dino/dinov3_repo` before building: the build bundles whichever repositories are
-present, and an installer without it keeps Dataset analysis working on DINOv2, losing only
-the DINOv3-SAT variant.
+The feature loses nothing for anyone who wants DINOv3. Clone the repository into the models
+directory; the loader prefers your copy over anything bundled, and no restart is needed:
+
+```powershell
+git clone --depth 1 https://github.com/facebookresearch/dinov3 `
+  "$env:APPDATA\GeoTileLabel\data\models\dino\dinov3_repo"
+```
+
+Accepting the DINOv3 License is then your own decision, taken directly with Meta rather than
+inherited from this installer. Until you make it, the application says plainly that the
+DINOv3 backbone code is missing, and Dataset analysis keeps working on DINOv2 - only the
+DINOv3-SAT variant is unavailable.
 
 ## Citing
 

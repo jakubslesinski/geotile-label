@@ -37,8 +37,13 @@ def _default_exemplar_checkpoint(models_dir: str | None = None) -> str | None:
     """Domyślny checkpoint dla egzemplarza: **DINOv3-SAT** (satelitarny), gdy dostępny —
     domenowo mocniejszy na EO/SAR niż najlżejszy DINOv2-S (który zostaje domyślny dla analizy
     DI2, bo tam na CPU liczy się przepustowość na dziesiątkach tysięcy obiektów)."""
-    from services.embedding_backbone import list_dino_checkpoints
+    from services.embedding_backbone import dino_repo_available, list_dino_checkpoints
 
+    # Wagi SAT bez kodu repo DINOv3 są nie do wczytania, a wydanie tego kodu nie niesie
+    # (licencja nie jest otwarta). Bez tego warunku auto-wybór kończył się wyjątkiem przy
+    # wczytaniu backbone'u, mimo że bramka przepuściła projekt na wagach DINOv2.
+    if not dino_repo_available("dinov3"):
+        return None
     # Celowo ViT-L SAT (~300M, 1024-dim) — praktyczny do interaktywnego sliding-window.
     # NIE 7B (vit7b16): miliardy parametrów, niepraktyczne nawet na GPU dla tego zastosowania.
     for path in list_dino_checkpoints(models_dir):

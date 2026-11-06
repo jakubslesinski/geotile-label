@@ -245,6 +245,7 @@ async def exemplar_find_similar(project_id: str, scene_id: str, body: FindSimila
         if body.class_id not in {int(c["id"]) for c in classes}:
             raise HTTPException(400, "class_id is not a project class")
 
+    from services.embedding_backbone import EmbeddingBackboneError
     from services.exemplar_assist import ExemplarError, transfer_exemplar_geometry
 
     modality = _scene_modality(project_id, scene_id)
@@ -256,16 +257,16 @@ async def exemplar_find_similar(project_id: str, scene_id: str, body: FindSimila
     try:
         if body.engine == "dino":
             from services.dino_exemplar_assist import DinoFeatureBackend, find_similar_dino
-            from services.embedding_backbone import dino_runtime_available
+            from services.embedding_backbone import dino_unavailable_reason
 
             config = load_json(project_id, "prediction_config", default={})
             dino_dir = config.get("dino_models_dir") or None
             dino_ckpt = config.get("dino_checkpoint") or None
-            if not dino_runtime_available(dino_ckpt, dino_dir):
+            reason = dino_unavailable_reason(dino_ckpt, dino_dir)
+            if reason:
                 raise HTTPException(
                     400,
-                    "Backbone DINO niedostępny - wskaż wagi w panelu Predykcja "
-                    "(albo umieść je w MODELS_ROOT/dino, np. dinov3_vitl16_…sat493m.pth).",
+                    reason + " Katalog wag i checkpoint wskażesz w panelu Predykcja.",
                 )
             backbone = DinoFeatureBackend(preferred=dino_ckpt, models_dir=dino_dir, device=device)
             exemplars = [body.exemplar_bbox, *(body.extra_exemplar_bboxes or [])]
@@ -307,7 +308,7 @@ async def exemplar_find_similar(project_id: str, scene_id: str, body: FindSimila
             project_id=project_id,
             scene_id=scene_id,
         )
-    except (ExemplarError, SamAssistError) as exc:
+    except (ExemplarError, SamAssistError, EmbeddingBackboneError) as exc:
         raise HTTPException(422, str(exc)) from exc
     except FileNotFoundError as exc:
         raise HTTPException(404, str(exc)) from exc

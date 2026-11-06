@@ -19,17 +19,21 @@ sygnał o **jakości zbioru dostępny od razu** - nie trzeba czekać na wynik tr
 !!! info "Potrzebne wagi DINO"
 
     Analiza wymaga wag DINO w katalogu modeli (`models/dino`, np.
-    `dinov2_vits14_reg4_pretrain.pth`). Kod modelu jedzie z aplikacją - Ty dostarczasz tylko
-    plik wag. Bez wag przycisk zgłosi czytelny powód, zamiast liczyć po cichu byle co.
-    Wszystko działa **offline**. Na GPU liczy się szybciej, ale CPU też wystarcza.
+    `dinov2_vits14_reg4_pretrain.pth`). Kod modelu DINOv2 jedzie z aplikacją - Ty
+    dostarczasz tylko plik wag. Bez wag przycisk zgłosi czytelny powód, zamiast liczyć
+    po cichu byle co. Wszystko działa **offline**. Na GPU liczy się szybciej, ale CPU
+    też wystarcza.
 
-!!! warning "Kod DINOv3 nie jest na licencji otwartej"
+!!! warning "DINOv3 wymaga jednego dodatkowego kroku"
 
-    Dołączane są dwa repozytoria backbone'u: `dinov2` (Apache-2.0) i `dinov3`. To drugie jest
-    objęte **licencją DINOv3**, która pozwala na redystrybucję, ale wiąże każdego odbiorcę
-    i zabrania zastosowań **wojskowych, wywiadowczych, jądrowych oraz objętych ITAR**. Pełna
-    treść instalowana jest obok kodu. Jeżeli te warunki nie pasują do Twojego wdrożenia,
-    warianty DINOv2 pokrywają tę samą analizę, tylko bez DINOv3-SAT.
+    Z aplikacją jedzie tylko kod backbone'u `dinov2` (Apache-2.0). `dinov3` nie: **licencja
+    DINOv3** nie jest otwarta, wiąże każdego odbiorcę i zabrania zastosowań **wojskowych,
+    wywiadowczych, jądrowych oraz objętych ITAR**, więc jej przyjęcie zostaje Twoją decyzją,
+    a nie czymś odziedziczonym po instalatorze. Żeby pracować na wagach DINOv3, sklonuj
+    `https://github.com/facebookresearch/dinov3` do
+    `%APPDATA%\GeoTileLabel\data\models\dino\dinov3_repo`; restart nie jest potrzebny.
+    Do tego czasu analiza liczy się na wariantach DINOv2, które pokrywają tę samą pracę bez
+    DINOv3-SAT, a aplikacja wprost mówi, kiedy brakuje właśnie kodu DINOv3.
 
 Analiza chodzi **w tle** - pasek postępu pokazuje etapy (wczytanie backbone'u → embeddingi →
 podobieństwo → duplikaty → przykłady klas). Wynik zostaje zapisany, więc wracasz do niego bez

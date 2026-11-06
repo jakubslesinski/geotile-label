@@ -57,14 +57,11 @@ class EmbeddingAnalysisRequest(BaseModel):
 def start_embedding_analysis(project_id: str, body: EmbeddingAnalysisRequest | None = None):
     if not project_exists(project_id):
         raise HTTPException(404, "Project not found")
-    from services.embedding_backbone import dino_runtime_available, resolve_dino_checkpoint
+    from services.embedding_backbone import dino_unavailable_reason, resolve_dino_checkpoint
 
-    if not dino_runtime_available():
-        raise HTTPException(
-            400,
-            "Backbone DINO niedostępny - brak wag w MODELS_ROOT/dino "
-            "(np. dinov2_vits14_reg4_pretrain.pth).",
-        )
+    reason = dino_unavailable_reason()
+    if reason:
+        raise HTTPException(400, reason)
     body = body or EmbeddingAnalysisRequest()
     if body.dataset_run_id:
         # Wskazanie runu jest jawne — jeśli nie istnieje, mów od razu (bez cichego pominięcia).
