@@ -1,0 +1,62 @@
+{
+  "_comment": [
+    "Template for backend/benchmarks/benchmark_provider_import.py, the read-only audit of",
+    "real provider deliveries. Copy this file to scripts/provider-import-paths.json, which",
+    "is gitignored, and point the paths at your own data. Provider deliveries must not reach",
+    "the repository or CI, so only this template is committed.",
+    "",
+    "    python backend/benchmarks/benchmark_provider_import.py --config scripts/provider-import-paths.json",
+    "",
+    "Each entry needs exactly three keys: name, provider and path. Any other key, including",
+    "this comment, is ignored.",
+    "",
+    "name     a label for the report; it is what identifies the row, so keep it neutral.",
+    "provider one of: generic, iceye, capella, umbra, pleiades_neo, worldview, blacksky.",
+    "path     the root of the delivery. ~ is expanded. The audit calls stat() and may open",
+    "         small metadata sidecars; it never reads pixels and never writes to the source.",
+    "",
+    "A source that is not reachable is reported as SKIPPED_REAL_DATA rather than silently",
+    "passing, so an incomplete config degrades honestly. If no source at all is reachable,",
+    "the process exits with code 2.",
+    "",
+    "By default the report carries the path of every source. Pass --anonymize to replace",
+    "the paths with stable hashes before sharing the report outside your machine."
+  ],
+  "sources": [
+    {
+      "name": "iceye-grd-sample",
+      "provider": "iceye",
+      "path": "D:/providers/iceye"
+    },
+    {
+      "name": "capella-gec-sample",
+      "provider": "capella",
+      "path": "D:/providers/capella"
+    },
+    {
+      "name": "umbra-gec-sample",
+      "provider": "umbra",
+      "path": "D:/providers/umbra"
+    },
+    {
+      "name": "pleiades-neo-ortho-sample",
+      "provider": "pleiades_neo",
+      "path": "D:/providers/pleiades-neo"
+    },
+    {
+      "name": "worldview-mul-pan-sample",
+      "provider": "worldview",
+      "path": "D:/providers/worldview"
+    },
+    {
+      "name": "blacksky-ortho-sample",
+      "provider": "blacksky",
+      "path": "D:/providers/blacksky"
+    },
+    {
+      "name": "loose-geotiff-directory",
+      "provider": "generic",
+      "path": "~/imagery/loose-geotiffs"
+    }
+  ]
+}
