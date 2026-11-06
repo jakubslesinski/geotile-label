@@ -1,6 +1,6 @@
 [package]
 name = "geotile-label-desktop"
-version = "1.4.0"
+version = "1.4.1"
 description = "GeoTile Label desktop application"
 authors = ["Jakub Slesinski <jakub.slesinski@wat.edu.pl>"]
 edition = "2021"
